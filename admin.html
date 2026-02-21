@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folievoordelen - Admin Panel PRO</title>
+    <script src="calculator_products.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+        h1 { color: #333; margin-bottom: 10px; font-size: 32px; }
+        h2 { color: #555; margin-top: 30px; margin-bottom: 20px; font-size: 24px; 
+             border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h3 { color: #667eea; margin-bottom: 15px; font-size: 18px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e9ecef; }
+        .tab {
+            padding: 12px 24px; background: transparent; border: none;
+            cursor: pointer; font-size: 16px; font-weight: 600; color: #666;
+            border-bottom: 3px solid transparent; transition: all 0.3s;
+        }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .brand-section { margin-bottom: 40px; padding: 30px; background: #f8f9fa; border-radius: 15px; }
+        .brand-header { background: linear-gradient(135deg, #d4af37 0%, #c5a028 100%);
+                        color: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .brand-header h2 { border: none; color: #1a1a1a; margin: 0; }
+        
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .category-card {
+            background: white; padding: 20px; border-radius: 12px;
+            border-left: 5px solid #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .category-card.wood { border-left-color: #8B4513; }
+        .category-card.solid { border-left-color: #4CAF50; }
+        .category-card.stone { border-left-color: #757575; }
+        .category-card.metal { border-left-color: #9E9E9E; }
+        .category-card.textile { border-left-color: #E91E63; }
+        .category-card.texture { border-left-color: #FF9800; }
+        .category-card.concrete { border-left-color: #607D8B; }
+        .category-card.glitter { border-left-color: #FF4081; }
+        
+        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .category-icon { font-size: 24px; }
+        .category-count { background: #e3f2fd; padding: 5px 15px; border-radius: 20px;
+                         font-size: 14px; font-weight: 600; color: #1565c0; }
+        
+        label { display: block; color: #555; font-weight: 600; margin-bottom: 8px; margin-top: 15px; font-size: 14px; }
+        input[type="number"] {
+            width: 100%; padding: 12px; border: 2px solid #dee2e6;
+            border-radius: 8px; font-size: 16px; font-weight: 600;
+        }
+        input:focus { outline: none; border-color: #667eea; }
+        
+        .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .price-input { position: relative; }
+        .price-input input { padding-left: 30px; }
+        .price-input::before { content: '€'; position: absolute; left: 12px; top: 42px;
+                               font-weight: bold; color: #666; font-size: 16px; }
+        
+        .save-button {
+            background: linear-gradient(135deg, #28a745 0%, #20893b 100%);
+            color: white; border: none; padding: 15px 30px;
+            border-radius: 10px; font-size: 16px; font-weight: 600;
+            cursor: pointer; margin-top: 20px; width: 100%;
+        }
+        .save-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40,167,69,0.3); }
+        
+        .export-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 15px 30px;
+            border-radius: 10px; font-size: 16px; font-weight: 600;
+            cursor: pointer; margin-top: 10px; width: 100%;
+        }
+        
+        .info-box {
+            background: #e3f2fd; padding: 15px; border-radius: 8px;
+            margin: 20px 0; border-left: 4px solid #2196f3;
+        }
+        .info-box strong { color: #1565c0; }
+        
+        .warning-box {
+            background: #fff3cd; padding: 15px; border-radius: 8px;
+            margin: 20px 0; border-left: 4px solid #ff9800;
+        }
+        .warning-box strong { color: #f57c00; }
+        
+        .success-box {
+            background: #d4edda; padding: 15px; border-radius: 8px;
+            margin: 20px 0; border-left: 4px solid #28a745; display: none;
+        }
+        .success-box.show { display: block; }
+        .success-box strong { color: #155724; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px; border-radius: 10px; text-align: center;
+        }
+        .stat-number { font-size: 32px; font-weight: bold; margin: 10px 0; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Folievoordelen - Admin Panel PRO</h1>
+        <p class="subtitle">Beheer prijzen per productcategorie voor Bodaq en Coverstyl</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('pricing')">💰 Prijzen</button>
+            <button class="tab" onclick="switchTab('settings')">⚙️ Instellingen</button>
+            <button class="tab" onclick="switchTab('stats')">📊 Statistieken</button>
+        </div>
+
+        <!-- Pricing Tab -->
+        <div id="pricing-tab" class="tab-content active">
+            <div class="info-box">
+                <strong>💡 Nieuw:</strong> Stel nu aparte prijzen in per categorie voor Bodaq en Coverstyl!
+                De folie prijs per m² kan nu verschillen per houtsoort, steensoort, uni kleur, etc.
+            </div>
+
+            <!-- Bodaq Section -->
+            <div class="brand-section">
+                <div class="brand-header">
+                    <h2>🟡 BODAQ Prijzen per Categorie</h2>
+                    <p style="margin: 10px 0 0 0; opacity: 0.8;">262 kleuren verdeeld over 6 categorieën</p>
+                </div>
+
+                <div class="category-grid" id="bodaqPricing"></div>
+            </div>
+
+            <!-- Coverstyl Section -->
+            <div class="brand-section">
+                <div class="brand-header">
+                    <h2>🔵 COVERSTYL Prijzen per Categorie</h2>
+                    <p style="margin: 10px 0 0 0; opacity: 0.8;">227 kleuren verdeeld over 7 categorieën</p>
+                </div>
+
+                <div class="category-grid" id="coverstylPricing"></div>
+            </div>
+
+            <button class="save-button" onclick="savePricing()">💾 Alle Prijzen Opslaan</button>
+            <div id="successMessage" class="success-box">
+                <strong>✅ Opgeslagen!</strong> Prijzen zijn succesvol opgeslagen.
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <h2>⚙️ Algemene Instellingen</h2>
+            
+            <div style="max-width: 600px;">
+                <div class="category-card">
+                    <h3>📐 Basis Prijzen</h3>
+                    <div class="price-row">
+                        <div class="price-input">
+                            <label>Kastdeurtje (front)</label>
+                            <input type="number" id="prijs-front" value="25" step="0.5">
+                        </div>
+                        <div class="price-input">
+                            <label>Lade</label>
+                            <input type="number" id="prijs-lade" value="15" step="0.5">
+                        </div>
+                    </div>
+                    <div class="price-row">
+                        <div class="price-input">
+                            <label>Plintlijst per meter</label>
+                            <input type="number" id="prijs-plintlijst" value="12" step="0.5">
+                        </div>
+                        <div class="price-input">
+                            <label>Zijkant</label>
+                            <input type="number" id="prijs-zijkant" value="18" step="0.5">
+                        </div>
+                    </div>
+                    <div class="price-row">
+                        <div class="price-input">
+                            <label>Rekje</label>
+                            <input type="number" id="prijs-rekje" value="8" step="0.5">
+                        </div>
+                        <div class="price-input">
+                            <label>Emballage (vast)</label>
+                            <input type="number" id="prijs-emballage" value="25" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card" style="margin-top: 20px;">
+                    <h3>📊 Folie Instellingen</h3>
+                    <label>Verspilling percentage</label>
+                    <input type="number" id="verspilling" value="15" step="1" min="0" max="50">
+                    <small style="color: #666;">Standaard: 15% verspilling voor snijverlies</small>
+                </div>
+
+                <div class="category-card" style="margin-top: 20px;">
+                    <h3>📧 Contactgegevens</h3>
+                    <label>Telefoonnummer</label>
+                    <input type="tel" id="contact-phone" value="0631917022" 
+                           style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px; margin-bottom: 15px;">
+                    <small style="color: #666; display: block; margin-bottom: 15px;">Gebruikt voor WhatsApp links</small>
+                    
+                    <label>Email adres voor offertes</label>
+                    <input type="text" id="contact-email" value="info@folievoordelen.nl" 
+                           style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px;">
+                    <small style="color: #666; display: block; margin-top: 5px;">Ontvangt calculator aanvragen</small>
+                </div>
+            </div>
+
+            <button class="save-button" onclick="saveSettings()">💾 Instellingen Opslaan</button>
+            <button class="export-button" onclick="exportSettings()">📤 Export Prijslijst (JSON)</button>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="stats-tab" class="tab-content">
+            <h2>📊 Statistieken</h2>
+            <div class="stats-grid" id="statsGrid"></div>
+            
+            <div style="margin-top: 30px;">
+                <h3>Bodaq Categorieën</h3>
+                <div id="bodaqStats" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <h3>Coverstyl Categorieën</h3>
+                <div id="coverstylStats" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        if (typeof BODAQ_PRODUCTS === 'undefined' || typeof COVERSTYL_PRODUCTS === 'undefined') {
+            alert('FOUT: calculator_products.js niet gevonden!');
+        }
+
+        const CATEGORY_INFO = {
+            'Wood': { icon: '🌳', name: 'Hout', color: '#8B4513' },
+            'Solid': { icon: '🎨', name: 'Uni', color: '#4CAF50' },
+            'Stone': { icon: '🪨', name: 'Steen', color: '#757575' },
+            'Metal': { icon: '⚙️', name: 'Metaal', color: '#9E9E9E' },
+            'Textile': { icon: '🧵', name: 'Textiel', color: '#E91E63' },
+            'Texture': { icon: '✨', name: 'Textuur', color: '#FF9800' },
+            'Concrete': { icon: '🏗️', name: 'Beton', color: '#607D8B' },
+            'Glitter': { icon: '✨', name: 'Glitter', color: '#FF4081' }
+        };
+
+        const DEFAULT_PRICES = {
+            bodaq: {
+                Wood: 45,
+                Solid: 42,
+                Stone: 48,
+                Metal: 50,
+                Textile: 47,
+                Texture: 44
+            },
+            coverstyl: {
+                Wood: 43,
+                Solid: 40,
+                Stone: 46,
+                Concrete: 45,
+                Metal: 48,
+                Textile: 45,
+                Glitter: 52
+            }
+        };
+
+        function countCategories(products) {
+            const counts = {};
+            products.forEach(p => {
+                counts[p.category] = (counts[p.category] || 0) + 1;
+            });
+            return counts;
+        }
+
+        function loadPricing() {
+            const saved = localStorage.getItem('categoryPricing');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return DEFAULT_PRICES;
+        }
+
+        function savePricing() {
+            const pricing = {
+                bodaq: {},
+                coverstyl: {}
+            };
+
+            // Bodaq
+            Object.keys(CATEGORY_INFO).forEach(cat => {
+                const input = document.getElementById(`bodaq-${cat}`);
+                if (input) {
+                    pricing.bodaq[cat] = parseFloat(input.value);
+                }
+            });
+
+            // Coverstyl
+            Object.keys(CATEGORY_INFO).forEach(cat => {
+                const input = document.getElementById(`coverstyl-${cat}`);
+                if (input) {
+                    pricing.coverstyl[cat] = parseFloat(input.value);
+                }
+            });
+
+            localStorage.setItem('categoryPricing', JSON.stringify(pricing));
+            
+            // Show success
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+
+        function saveSettings() {
+            const settings = {
+                prijzen: {
+                    front: parseFloat(document.getElementById('prijs-front').value),
+                    lade: parseFloat(document.getElementById('prijs-lade').value),
+                    plintlijst: parseFloat(document.getElementById('prijs-plintlijst').value),
+                    zijkant: parseFloat(document.getElementById('prijs-zijkant').value),
+                    rekje: parseFloat(document.getElementById('prijs-rekje').value),
+                    emballage: parseFloat(document.getElementById('prijs-emballage').value)
+                },
+                folie: {
+                    verspilling_percentage: parseInt(document.getElementById('verspilling').value)
+                },
+                contact: {
+                    phone: document.getElementById('contact-phone').value,
+                email: document.getElementById('contact-email').value
+                }
+            };
+            
+            localStorage.setItem('calculatorSettings', JSON.stringify(settings));
+            alert('✅ Instellingen opgeslagen!');
+        }
+
+        function exportSettings() {
+            const pricing = loadPricing();
+            const settings = JSON.parse(localStorage.getItem('calculatorSettings') || '{}');
+            
+            const exportData = {
+                categoryPricing: pricing,
+                generalSettings: settings,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `folievoordelen-prijzen-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function renderPricing() {
+            const pricing = loadPricing();
+            
+            // Bodaq
+            const bodaqCounts = countCategories(BODAQ_PRODUCTS);
+            const bodaqGrid = document.getElementById('bodaqPricing');
+            bodaqGrid.innerHTML = Object.entries(bodaqCounts).sort().map(([cat, count]) => {
+                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
+                const price = pricing.bodaq[cat] || DEFAULT_PRICES.bodaq[cat] || 45;
+                
+                return `
+                    <div class="category-card ${cat.toLowerCase()}">
+                        <div class="category-header">
+                            <div>
+                                <span class="category-icon">${info.icon}</span>
+                                <strong style="font-size: 18px; margin-left: 10px;">${info.name}</strong>
+                            </div>
+                            <span class="category-count">${count} kleuren</span>
+                        </div>
+                        <div class="price-input">
+                            <label>Folie prijs per m²</label>
+                            <input type="number" id="bodaq-${cat}" value="${price}" step="0.5" min="0">
+                        </div>
+                        <small style="color: #666; margin-top: 8px; display: block;">
+                            Totale omzet potentieel: €${(count * price * 2).toFixed(0)}
+                        </small>
+                    </div>
+                `;
+            }).join('');
+
+            // Coverstyl
+            const coverstylCounts = countCategories(COVERSTYL_PRODUCTS);
+            const coverstylGrid = document.getElementById('coverstylPricing');
+            coverstylGrid.innerHTML = Object.entries(coverstylCounts).sort().map(([cat, count]) => {
+                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
+                const price = pricing.coverstyl[cat] || DEFAULT_PRICES.coverstyl[cat] || 45;
+                
+                return `
+                    <div class="category-card ${cat.toLowerCase()}">
+                        <div class="category-header">
+                            <div>
+                                <span class="category-icon">${info.icon}</span>
+                                <strong style="font-size: 18px; margin-left: 10px;">${info.name}</strong>
+                            </div>
+                            <span class="category-count">${count} kleuren</span>
+                        </div>
+                        <div class="price-input">
+                            <label>Folie prijs per m²</label>
+                            <input type="number" id="coverstyl-${cat}" value="${price}" step="0.5" min="0">
+                        </div>
+                        <small style="color: #666; margin-top: 8px; display: block;">
+                            Totale omzet potentieel: €${(count * price * 2).toFixed(0)}
+                        </small>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStats() {
+            const bodaqCounts = countCategories(BODAQ_PRODUCTS);
+            const coverstylCounts = countCategories(COVERSTYL_PRODUCTS);
+            
+            // Main stats
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Totaal Producten</div>
+                    <div class="stat-number">${BODAQ_PRODUCTS.length + COVERSTYL_PRODUCTS.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bodaq Kleuren</div>
+                    <div class="stat-number">${BODAQ_PRODUCTS.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Coverstyl Kleuren</div>
+                    <div class="stat-number">${COVERSTYL_PRODUCTS.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Categorieën</div>
+                    <div class="stat-number">${new Set([...Object.keys(bodaqCounts), ...Object.keys(coverstylCounts)]).size}</div>
+                </div>
+            `;
+
+            // Bodaq breakdown
+            document.getElementById('bodaqStats').innerHTML = Object.entries(bodaqCounts).sort().map(([cat, count]) => {
+                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
+                const pct = ((count / BODAQ_PRODUCTS.length) * 100).toFixed(1);
+                return `
+                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; margin-bottom: 8px; border-radius: 8px;">
+                        <span><strong>${info.icon} ${info.name}</strong></span>
+                        <span>${count} kleuren (${pct}%)</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Coverstyl breakdown
+            document.getElementById('coverstylStats').innerHTML = Object.entries(coverstylCounts).sort().map(([cat, count]) => {
+                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
+                const pct = ((count / COVERSTYL_PRODUCTS.length) * 100).toFixed(1);
+                return `
+                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; margin-bottom: 8px; border-radius: 8px;">
+                        <span><strong>${info.icon} ${info.name}</strong></span>
+                        <span>${count} kleuren (${pct}%)</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('calculatorSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.getElementById('prijs-front').value = settings.prijzen?.front || 25;
+                document.getElementById('prijs-lade').value = settings.prijzen?.lade || 15;
+                document.getElementById('prijs-plintlijst').value = settings.prijzen?.plintlijst || 12;
+                document.getElementById('prijs-zijkant').value = settings.prijzen?.zijkant || 18;
+                document.getElementById('prijs-rekje').value = settings.prijzen?.rekje || 8;
+                document.getElementById('prijs-emballage').value = settings.prijzen?.emballage || 25;
+                document.getElementById('verspilling').value = settings.folie?.verspilling_percentage || 15;
+                document.getElementById('contact-email').value = settings.contact?.email || 'info@folievoordelen.nl';
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + '-tab').classList.add('active');
+            
+            if (tab === 'stats') {
+                renderStats();
+            }
+        }
+
+        function init() {
+            renderPricing();
+            loadSettings();
+            console.log('✅ Admin Panel geladen');
+            console.log(`📊 Bodaq: ${BODAQ_PRODUCTS.length} producten`);
+            console.log(`📊 Coverstyl: ${COVERSTYL_PRODUCTS.length} producten`);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
