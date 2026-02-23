@@ -620,8 +620,8 @@
                 const storedPrices = localStorage.getItem('categoryPricing');
                 if (storedPrices) {
                     const adminPrices = JSON.parse(storedPrices);
-                    if (adminPrices[brand] && adminPrices[brand][category]) {
-                        return adminPrices[brand][category];
+                    if (adminPrices[brand] && adminPrices[brand][category] && !isNaN(adminPrices[brand][category])) {
+                        return parseFloat(adminPrices[brand][category]);
                     }
                 }
             } catch (e) {
@@ -629,7 +629,11 @@
             }
             
             // FALLBACK: Gebruik hardcoded prijzen als er geen admin prijzen zijn
-            return CATEGORY_PRICES[brand][category] || CATEGORY_PRICES[brand]['Other'] || 80;
+            const price = CATEGORY_PRICES[brand] && CATEGORY_PRICES[brand][category];
+            if (price && !isNaN(price)) return parseFloat(price);
+            const otherPrice = CATEGORY_PRICES[brand] && CATEGORY_PRICES[brand]['Other'];
+            if (otherPrice && !isNaN(otherPrice)) return parseFloat(otherPrice);
+            return 80;
         }
 
         function loadColors() {
