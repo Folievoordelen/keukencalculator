@@ -706,7 +706,16 @@
             const products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
             const product = products.find(p => p.code === code);
             if (product) {
-                const pricePerMeter = getFoliePricePerMeter(currentBrand, product.category);
+                // Check voor handmatig aangepaste prijs in localStorage
+                const customPrices = JSON.parse(localStorage.getItem('customProductPrices') || '{}');
+                let pricePerMeter;
+                if (customPrices[product.code] && !isNaN(parseFloat(customPrices[product.code]))) {
+                    pricePerMeter = parseFloat(customPrices[product.code]);
+                } else if (product.pricePerMeter && !isNaN(product.pricePerMeter)) {
+                    pricePerMeter = product.pricePerMeter;
+                } else {
+                    pricePerMeter = getFoliePricePerMeter(currentBrand, product.category);
+                }
                 selectedColor = { 
                     code: product.code, 
                     name: product.name, 
@@ -1009,7 +1018,7 @@
             let totalStrekkendMeters = 0;
             
             const verspilling = 1 + (settings.folie.verspilling_percentage / 100);
-            const defaultFoliePrijs = selectedColor ? selectedColor.pricePerMeter : 80;
+            const foliePrijs = selectedColor ? selectedColor.pricePerMeter : 80;
             
             // KASTDEURTJES
             savedDeurtjes.forEach(item => {
@@ -1018,8 +1027,7 @@
                 const strekkendMeters = breedteMeters * item.aantal;
                 const strekkendMetersMetVerspilling = strekkendMeters * verspilling;
                 const strekkendMetersAfgerond = Math.ceil(strekkendMetersMetVerspilling);
-                const itemFoliePrijs = (item.foliePrijs && !isNaN(item.foliePrijs)) ? item.foliePrijs : defaultFoliePrijs;
-                const folieKosten = strekkendMetersAfgerond * itemFoliePrijs;
+                const folieKosten = strekkendMetersAfgerond * foliePrijs;
                 const arbeidKosten = item.aantal * settings.prijzen.front;
                 deurtjesTotal += folieKosten + arbeidKosten;
             });
@@ -1031,8 +1039,7 @@
                 const strekkendMeters = breedteMeters * item.aantal;
                 const strekkendMetersMetVerspilling = strekkendMeters * verspilling;
                 const strekkendMetersAfgerond = Math.ceil(strekkendMetersMetVerspilling);
-                const itemFoliePrijs = (item.foliePrijs && !isNaN(item.foliePrijs)) ? item.foliePrijs : defaultFoliePrijs;
-                const folieKosten = strekkendMetersAfgerond * itemFoliePrijs;
+                const folieKosten = strekkendMetersAfgerond * foliePrijs;
                 const arbeidKosten = item.aantal * settings.prijzen.lade;
                 ladesTotal += folieKosten + arbeidKosten;
             });
@@ -1043,8 +1050,7 @@
                 const lengteMeters = item.lengte * item.aantal;
                 const lengteMetVerspilling = lengteMeters * verspilling;
                 const lengteAfgerond = Math.ceil(lengteMetVerspilling);
-                const itemFoliePrijs = (item.foliePrijs && !isNaN(item.foliePrijs)) ? item.foliePrijs : defaultFoliePrijs;
-                const folieKosten = lengteAfgerond * itemFoliePrijs;
+                const folieKosten = lengteAfgerond * foliePrijs;
                 const arbeidKosten = item.aantal * settings.prijzen.plintlijst;
                 plintlijstTotal += folieKosten + arbeidKosten;
             });
@@ -1056,8 +1062,7 @@
                 const strekkendMeters = breedteMeters * item.aantal;
                 const strekkendMetersMetVerspilling = strekkendMeters * verspilling;
                 const strekkendMetersAfgerond = Math.ceil(strekkendMetersMetVerspilling);
-                const itemFoliePrijs = (item.foliePrijs && !isNaN(item.foliePrijs)) ? item.foliePrijs : defaultFoliePrijs;
-                const folieKosten = strekkendMetersAfgerond * itemFoliePrijs;
+                const folieKosten = strekkendMetersAfgerond * foliePrijs;
                 const arbeidKosten = item.aantal * settings.prijzen.zijkant;
                 zijkantenTotal += folieKosten + arbeidKosten;
             });
