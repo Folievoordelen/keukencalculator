@@ -185,7 +185,6 @@
         .color-disabled {
             opacity: 0.5;
         }
-
         @media (max-width: 768px) {
             #bulk-tab > div[style*="grid-template-columns"] {
                 grid-template-columns: 1fr !important;
@@ -197,120 +196,22 @@
 <body>
     <div class="container">
         <h1>🎨 Folievoordelen - Admin Panel PRO</h1>
-        <p class="subtitle">Beheer prijzen per productcategorie voor Bodaq en Coverstyl</p>
+        <p class="subtitle">Beheer individuele folieprijzen voor Bodaq en Coverstyl</p>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('pricing')">💰 Prijzen</button>
+            <button class="tab active" onclick="switchTab('colors')">🎨 Kleuren & Prijzen</button>
+            <button class="tab" onclick="switchTab('aanvragen')">📋 Aanvragen</button>
+            <button class="tab" onclick="switchTab('bulk')">📈 Bulk Prijzen</button>
             <button class="tab" onclick="switchTab('settings')">⚙️ Instellingen</button>
             <button class="tab" onclick="switchTab('stats')">📊 Statistieken</button>
-            <button class="tab" onclick="switchTab('colors')">🎨 Kleuren</button>
-            <button class="tab" onclick="switchTab('bulk')">📈 Bulk Prijzen</button>
         </div>
 
-        <!-- Pricing Tab -->
-        <div id="pricing-tab" class="tab-content active">
-            <div class="info-box">
-                <strong>💡 Nieuw:</strong> Stel nu aparte prijzen in per categorie voor Bodaq en Coverstyl!
-                De folie prijs per m² kan nu verschillen per houtsoort, steensoort, uni kleur, etc.
-            </div>
-
-            <!-- Bodaq Section -->
-            <div class="brand-section">
-                <div class="brand-header">
-                    <h2>🟡 BODAQ Prijzen per Categorie</h2>
-                    <p style="margin: 10px 0 0 0; opacity: 0.8;">262 kleuren verdeeld over 6 categorieën</p>
-                </div>
-
-                <div class="category-grid" id="bodaqPricing"></div>
-            </div>
-
-            <!-- Coverstyl Section -->
-            <div class="brand-section">
-                <div class="brand-header">
-                    <h2>🔵 COVERSTYL Prijzen per Categorie</h2>
-                    <p style="margin: 10px 0 0 0; opacity: 0.8;">227 kleuren verdeeld over 7 categorieën</p>
-                </div>
-
-                <div class="category-grid" id="coverstylPricing"></div>
-            </div>
-
-            <button class="save-button" onclick="savePricing()">💾 Alle Prijzen Opslaan</button>
-            <div id="successMessage" class="success-box">
-                <strong>✅ Opgeslagen!</strong> Prijzen zijn succesvol opgeslagen.
-            </div>
-        </div>
-
-        <!-- Settings Tab -->
-        <div id="settings-tab" class="tab-content">
-            <h2>⚙️ Algemene Instellingen</h2>
-            
-            <div style="max-width: 600px;">
-                <div class="category-card">
-                    <h3>📐 Basis Prijzen</h3>
-                    <div class="price-row">
-                        <div class="price-input">
-                            <label>Kastdeurtje (front)</label>
-                            <input type="number" id="prijs-front" value="25" step="0.5">
-                        </div>
-                        <div class="price-input">
-                            <label>Lade</label>
-                            <input type="number" id="prijs-lade" value="15" step="0.5">
-                        </div>
-                    </div>
-                    <div class="price-row">
-                        <div class="price-input">
-                            <label>Plintlijst per meter</label>
-                            <input type="number" id="prijs-plintlijst" value="12" step="0.5">
-                        </div>
-                        <div class="price-input">
-                            <label>Zijkant</label>
-                            <input type="number" id="prijs-zijkant" value="18" step="0.5">
-                        </div>
-                    </div>
-                    <div class="price-row">
-                        <div class="price-input">
-                            <label>Rekje</label>
-                            <input type="number" id="prijs-rekje" value="8" step="0.5">
-                        </div>
-                        <div class="price-input">
-                            <label>Emballage (vast)</label>
-                            <input type="number" id="prijs-emballage" value="25" step="1">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="category-card" style="margin-top: 20px;">
-                    <h3>📊 Folie Instellingen</h3>
-                    <label>Verspilling percentage</label>
-                    <input type="number" id="verspilling" value="15" step="1" min="0" max="50">
-                    <small style="color: #666;">Standaard: 15% verspilling voor snijverlies</small>
-                </div>
-
-                <div class="category-card" style="margin-top: 20px;">
-                    <h3>📧 Contactgegevens</h3>
-                    <label>Telefoonnummer</label>
-                    <input type="tel" id="contact-phone" value="0631917022" 
-                           style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px; margin-bottom: 15px;">
-                    <small style="color: #666; display: block; margin-bottom: 15px;">Gebruikt voor WhatsApp links</small>
-                    
-                    <label>Email adres voor offertes</label>
-                    <input type="text" id="contact-email" value="info@folievoordelen.nl" 
-                           style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px;">
-                    <small style="color: #666; display: block; margin-top: 5px;">Ontvangt calculator aanvragen</small>
-                </div>
-            </div>
-
-            <button class="save-button" onclick="saveSettings()">💾 Instellingen Opslaan</button>
-            <button class="export-button" onclick="exportSettings()">📤 Export Prijslijst (JSON)</button>
-        </div>
-
-
-        <!-- Colors Tab -->
-        <div id="colors-tab" class="tab-content">
-            <h2>🎨 Kleuren Beheren</h2>
+        <!-- Colors & Prijzen Tab (standaard) -->
+        <div id="colors-tab" class="tab-content active">
+            <h2>🎨 Kleuren & Prijzen Beheren</h2>
             
             <div class="info-box">
-                <strong>💡 Tip:</strong> Zet kleuren uit die je tijdelijk niet op voorraad hebt. Ze worden verborgen in de calculator.
+                <strong>💡 Tip:</strong> Elke folie heeft zijn eigen prijs. Pas prijzen aan per kleur, of gebruik de Bulk Prijzen tab om alles in één keer te verhogen. Zet kleuren uit die je tijdelijk niet op voorraad hebt.
             </div>
 
             <div class="tabs" style="margin-top: 20px; border-bottom: none;">
@@ -330,13 +231,32 @@
             <button class="save-button" onclick="saveColorSettings()">💾 Kleuren Instellingen Opslaan</button>
         </div>
 
-        <!-- Bulk Pricing Tab -->
-        <div id="bulk-tab" class="tab-content">
-            <h2>📈 Bulk Prijsverhoging</h2>
+        <!-- Aanvragen Tab -->
+        <div id="aanvragen-tab" class="tab-content">
+            <h2>📋 Aanvragen</h2>
             
             <div class="info-box">
-                <strong>💡 Handig:</strong> Verhoog (of verlaag) alle prijzen in één keer met een percentage. 
-                Bodaq en Coverstyl worden apart berekend. Dit past zowel de <strong>categorieprijzen</strong> als de <strong>individuele inkoopprijzen</strong> aan.
+                <strong>💡 Info:</strong> Hier zie je alle aanvragen die klanten via de calculator hebben verstuurd. 
+                Inclusief interne details zoals benodigde foliemeters per onderdeel.
+            </div>
+
+            <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="aanvraagSearch" placeholder="🔍 Zoek op naam, nummer of plaats..." 
+                       onkeyup="filterAanvragen()"
+                       style="flex: 1; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 16px;">
+                <button onclick="clearAanvragen()" style="padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🗑️ Alles wissen</button>
+            </div>
+
+            <div id="aanvragenList"></div>
+        </div>
+
+        <!-- Bulk Pricing Tab -->
+        <div id="bulk-tab" class="tab-content">
+            <h2>📈 Bulk Prijsaanpassing</h2>
+            
+            <div class="info-box">
+                <strong>💡 Handig:</strong> Verhoog (of verlaag) alle individuele folieprijzen in één keer met een percentage. 
+                Bodaq en Coverstyl worden apart berekend.
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px;">
@@ -350,9 +270,7 @@
                                style="flex: 1; font-size: 20px; text-align: center; padding: 15px;">
                         <span style="font-size: 24px; font-weight: bold; color: #666;">%</span>
                     </div>
-                    <small style="color: #666; display: block; margin-top: 8px;">
-                        Positief = prijsverhoging, Negatief = prijsverlaging
-                    </small>
+                    <small style="color: #666; display: block; margin-top: 8px;">Positief = prijsverhoging, Negatief = prijsverlaging</small>
 
                     <div style="display: flex; gap: 8px; margin-top: 15px;">
                         <button onclick="setBulkPct('bodaq', -5)" style="flex:1; padding: 8px; border: 2px solid #dc3545; background: white; color: #dc3545; border-radius: 8px; cursor: pointer; font-weight: 600;">-5%</button>
@@ -382,9 +300,7 @@
                                style="flex: 1; font-size: 20px; text-align: center; padding: 15px;">
                         <span style="font-size: 24px; font-weight: bold; color: #666;">%</span>
                     </div>
-                    <small style="color: #666; display: block; margin-top: 8px;">
-                        Positief = prijsverhoging, Negatief = prijsverlaging
-                    </small>
+                    <small style="color: #666; display: block; margin-top: 8px;">Positief = prijsverhoging, Negatief = prijsverlaging</small>
 
                     <div style="display: flex; gap: 8px; margin-top: 15px;">
                         <button onclick="setBulkPct('coverstyl', -5)" style="flex:1; padding: 8px; border: 2px solid #dc3545; background: white; color: #dc3545; border-radius: 8px; cursor: pointer; font-weight: 600;">-5%</button>
@@ -406,10 +322,74 @@
             </div>
 
             <div class="warning-box" style="margin-top: 30px;">
-                <strong>⚠️ Let op:</strong> De prijsverhoging wordt berekend over de <strong>huidige opgeslagen prijzen</strong>. 
+                <strong>⚠️ Let op:</strong> De prijsaanpassing wordt berekend over de <strong>huidige individuele folieprijzen</strong>. 
                 Als je twee keer +10% toepast, worden de prijzen in totaal 21% hoger (niet 20%).
                 Gebruik de Preview om te controleren voordat je toepast.
             </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <h2>⚙️ Algemene Instellingen</h2>
+            
+            <div style="max-width: 600px;">
+                <div class="category-card">
+                    <h3>📐 Basis Prijzen</h3>
+                    <div class="price-row">
+                        <div class="price-input">
+                            <label>Kastdeurtje (front)</label>
+                            <input type="number" id="prijs-front" value="25" step="0.5">
+                        </div>
+                        <div class="price-input">
+                            <label>Lade</label>
+                            <input type="number" id="prijs-lade" value="15" step="0.5">
+                        </div>
+                    </div>
+                    <div class="price-row">
+                        <div class="price-input">
+                            <label>Plintlijst per meter</label>
+                            <input type="number" id="prijs-plintlijst" value="12" step="0.5">
+                        </div>
+                        <div class="price-input">
+                            <label>Hoekkast</label>
+                            <input type="number" id="prijs-hoekkast" value="35" step="0.5">
+                        </div>
+                    </div>
+                    <div class="price-row">
+                        <div class="price-input">
+                            <label>Rekje</label>
+                            <input type="number" id="prijs-rekje" value="8" step="0.5">
+                        </div>
+                        <div class="price-input">
+                            <label>Emballage (vast)</label>
+                            <input type="number" id="prijs-emballage" value="25" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card" style="margin-top: 20px;">
+                    <h3>📊 Folie Instellingen</h3>
+                    <label>Verspilling percentage</label>
+                    <input type="number" id="verspilling" value="15" step="1" min="0" max="50">
+                    <small style="color: #666;">Standaard: 15% verspilling voor snijverlies</small>
+                </div>
+
+                <div class="category-card" style="margin-top: 20px;">
+                    <h3>📧 Contactgegevens</h3>
+                    <label>Telefoonnummer</label>
+                    <input type="tel" id="contact-phone" value="0631917022" 
+                           style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px; margin-bottom: 15px;">
+                    <small style="color: #666; display: block; margin-bottom: 15px;">Gebruikt voor WhatsApp links</small>
+                    
+                    <label>Email adres</label>
+                    <input type="text" id="contact-email" value="info@folievoordelen.nl" 
+                           style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px;">
+                    <small style="color: #666; display: block; margin-top: 5px;">Ontvangt calculator aanvragen</small>
+                </div>
+            </div>
+
+            <button class="save-button" onclick="saveSettings()">💾 Instellingen Opslaan</button>
+            <button class="export-button" onclick="exportSettings()">📤 Export Prijslijst (JSON)</button>
         </div>
 
         <!-- Stats Tab -->
@@ -519,7 +499,7 @@
                     front: parseFloat(document.getElementById('prijs-front').value),
                     lade: parseFloat(document.getElementById('prijs-lade').value),
                     plintlijst: parseFloat(document.getElementById('prijs-plintlijst').value),
-                    zijkant: parseFloat(document.getElementById('prijs-zijkant').value),
+                    hoekkast: parseFloat(document.getElementById('prijs-hoekkast').value),
                     rekje: parseFloat(document.getElementById('prijs-rekje').value),
                     emballage: parseFloat(document.getElementById('prijs-emballage').value)
                 },
@@ -552,64 +532,6 @@
             a.href = url;
             a.download = `folievoordelen-prijzen-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
-        }
-
-        function renderPricing() {
-            const pricing = loadPricing();
-            
-            // Bodaq
-            const bodaqCounts = countCategories(BODAQ_PRODUCTS);
-            const bodaqGrid = document.getElementById('bodaqPricing');
-            bodaqGrid.innerHTML = Object.entries(bodaqCounts).sort().map(([cat, count]) => {
-                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
-                const price = pricing.bodaq[cat] || DEFAULT_PRICES.bodaq[cat] || 45;
-                
-                return `
-                    <div class="category-card ${cat.toLowerCase()}">
-                        <div class="category-header">
-                            <div>
-                                <span class="category-icon">${info.icon}</span>
-                                <strong style="font-size: 18px; margin-left: 10px;">${info.name}</strong>
-                            </div>
-                            <span class="category-count">${count} kleuren</span>
-                        </div>
-                        <div class="price-input">
-                            <label>Folie prijs per m²</label>
-                            <input type="number" id="bodaq-${cat}" value="${price}" step="0.5" min="0">
-                        </div>
-                        <small style="color: #666; margin-top: 8px; display: block;">
-                            Totale omzet potentieel: €${(count * price * 2).toFixed(0)}
-                        </small>
-                    </div>
-                `;
-            }).join('');
-
-            // Coverstyl
-            const coverstylCounts = countCategories(COVERSTYL_PRODUCTS);
-            const coverstylGrid = document.getElementById('coverstylPricing');
-            coverstylGrid.innerHTML = Object.entries(coverstylCounts).sort().map(([cat, count]) => {
-                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
-                const price = pricing.coverstyl[cat] || DEFAULT_PRICES.coverstyl[cat] || 45;
-                
-                return `
-                    <div class="category-card ${cat.toLowerCase()}">
-                        <div class="category-header">
-                            <div>
-                                <span class="category-icon">${info.icon}</span>
-                                <strong style="font-size: 18px; margin-left: 10px;">${info.name}</strong>
-                            </div>
-                            <span class="category-count">${count} kleuren</span>
-                        </div>
-                        <div class="price-input">
-                            <label>Folie prijs per m²</label>
-                            <input type="number" id="coverstyl-${cat}" value="${price}" step="0.5" min="0">
-                        </div>
-                        <small style="color: #666; margin-top: 8px; display: block;">
-                            Totale omzet potentieel: €${(count * price * 2).toFixed(0)}
-                        </small>
-                    </div>
-                `;
-            }).join('');
         }
 
         function renderStats() {
@@ -669,7 +591,7 @@
                 document.getElementById('prijs-front').value = settings.prijzen?.front || 25;
                 document.getElementById('prijs-lade').value = settings.prijzen?.lade || 15;
                 document.getElementById('prijs-plintlijst').value = settings.prijzen?.plintlijst || 12;
-                document.getElementById('prijs-zijkant').value = settings.prijzen?.zijkant || 18;
+                document.getElementById('prijs-hoekkast').value = settings.prijzen?.hoekkast || 35;
                 document.getElementById('prijs-rekje').value = settings.prijzen?.rekje || 8;
                 document.getElementById('prijs-emballage').value = settings.prijzen?.emballage || 25;
                 document.getElementById('verspilling').value = settings.folie?.verspilling_percentage || 15;
@@ -688,10 +610,116 @@
             if (tab === 'stats') {
                 renderStats();
             }
+            if (tab === 'aanvragen') {
+                renderAanvragen();
+            }
+        }
+
+        // === AANVRAGEN FUNCTIES ===
+        function renderAanvragen() {
+            const aanvragen = JSON.parse(localStorage.getItem('aanvragen') || '[]');
+            const list = document.getElementById('aanvragenList');
+            
+            if (aanvragen.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;"><p style="font-size: 48px;">📭</p><p>Nog geen aanvragen ontvangen.</p></div>';
+                return;
+            }
+
+            const reversed = [...aanvragen].reverse();
+            list.innerHTML = reversed.map((a) => {
+                let samenstellingHTML = '';
+                
+                if (a.samenstelling.deurtjes && a.samenstelling.deurtjes.length > 0) {
+                    samenstellingHTML += '<div>🚪 Deurtjes: ' + a.samenstelling.deurtjes.map(d => `${d.aantal}× ${d.breedte}×${d.hoogte}cm`).join(', ') + '</div>';
+                }
+                if (a.samenstelling.lades && a.samenstelling.lades.length > 0) {
+                    samenstellingHTML += '<div>📦 Lades: ' + a.samenstelling.lades.map(l => `${l.aantal}× ${l.breedte}×${l.hoogte}cm`).join(', ') + '</div>';
+                }
+                if (a.samenstelling.plintlijsten && a.samenstelling.plintlijsten.length > 0) {
+                    samenstellingHTML += '<div>📏 Plintlijsten: ' + a.samenstelling.plintlijsten.map(p => `${p.aantal}× ${p.lengte}m×${p.hoogte}cm`).join(', ') + '</div>';
+                }
+                if (a.samenstelling.zijkanten && a.samenstelling.zijkanten.length > 0) {
+                    samenstellingHTML += '<div>📐 Zijkanten: ' + a.samenstelling.zijkanten.map(z => `${z.aantal}× ${z.breedte}×${z.hoogte}cm <strong>(${z.metersPerStuk}m folie/stuk)</strong>`).join(', ') + '</div>';
+                }
+                if (a.samenstelling.hoekkast > 0) {
+                    samenstellingHTML += `<div>🔲 Hoekkasten: ${a.samenstelling.hoekkast}</div>`;
+                }
+
+                const savedSettings = JSON.parse(localStorage.getItem('calculatorSettings') || '{}');
+                const myPhone = savedSettings.contact?.phone || '0631917022';
+                const myEmail = savedSettings.contact?.email || 'info@folievoordelen.nl';
+
+                const waPhone = (a.klant.telefoon || '').replace(/\s/g, '').replace(/^0/, '31');
+
+                return `
+                <div class="aanvraag-card" data-search="${(a.klant.naam + ' ' + a.nr + ' ' + a.klant.adres).toLowerCase()}" style="background: white; border-radius: 12px; border-left: 5px solid #d4af37; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <span style="background: #d4af37; color: #1a1a1a; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px;">${a.nr}</span>
+                            <span style="margin-left: 10px; color: #666; font-size: 14px;">${a.datum}</span>
+                        </div>
+                        <span style="font-size: 20px; font-weight: bold; color: #333;">${a.prijsIndicatie}</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <div style="font-weight: 600; font-size: 16px; margin-bottom: 5px;">👤 ${a.klant.naam}</div>
+                            <div style="color: #666; font-size: 13px;">📧 ${a.klant.email}</div>
+                            <div style="color: #666; font-size: 13px;">📱 ${a.klant.telefoon}</div>
+                            <div style="color: #666; font-size: 13px;">📍 ${a.klant.adres}</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">🎨 ${a.folie.merk} ${a.folie.code}</div>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 8px;">${a.folie.naam}</div>
+                            <div style="font-size: 13px;">${samenstellingHTML}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <span style="background: #e3f2fd; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #1565c0;">📏 Folie: ${a.totaalFolieMeters}m</span>
+                        <span style="background: #fff3cd; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #856404;">📊 Versp: ${a.verspilling}%</span>
+                        <span style="background: #e8f5e9; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #2e7d32;">💰 €${a.folie.prijsPerMeter}/m</span>
+                    </div>
+                    ${a.opmerkingen ? '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 13px;"><strong>💬 Opmerking:</strong> ' + a.opmerkingen + '</div>' : ''}
+                    
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="mailto:${a.klant.email}?subject=Re: Uw aanvraag ${a.nr} - Folievoordelen&body=Beste ${a.klant.naam},%0A%0ABedankt voor uw aanvraag (${a.nr}) voor ${a.folie.merk} ${a.folie.code}.%0A%0A%0A%0AMet vriendelijke groet,%0ARik Lentjes%0AFolievoordelen%0A${myPhone}" 
+                           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #0078d4; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
+                            📧 Mail klant
+                        </a>
+                        <a href="https://wa.me/${waPhone}?text=Hallo ${encodeURIComponent(a.klant.naam)},%20bedankt%20voor%20uw%20aanvraag%20(${a.nr})%20voor%20${encodeURIComponent(a.folie.merk)}%20${encodeURIComponent(a.folie.code)}.%20" 
+                           target="_blank"
+                           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #25d366; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
+                            💬 WhatsApp klant
+                        </a>
+                        <a href="tel:${a.klant.telefoon}" 
+                           style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
+                            📱 Bel klant
+                        </a>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function filterAanvragen() {
+            const search = document.getElementById('aanvraagSearch').value.toLowerCase();
+            document.querySelectorAll('.aanvraag-card').forEach(card => {
+                const text = card.dataset.search;
+                card.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        function clearAanvragen() {
+            const aanvragen = JSON.parse(localStorage.getItem('aanvragen') || '[]');
+            if (aanvragen.length === 0) { alert('Er zijn geen aanvragen om te wissen.'); return; }
+            if (confirm(`Weet je zeker dat je alle ${aanvragen.length} aanvragen wilt verwijderen?\n\nDit kan niet ongedaan worden gemaakt.`)) {
+                localStorage.removeItem('aanvragen');
+                renderAanvragen();
+                alert('✅ Alle aanvragen verwijderd.');
+            }
         }
 
         function init() {
-            renderPricing();
             loadSettings();
             console.log('✅ Admin Panel geladen');
             console.log(`📊 Bodaq: ${BODAQ_PRODUCTS.length} producten`);
@@ -714,43 +742,40 @@
         function previewBulk(brand) {
             const pct = parseFloat(document.getElementById(`bulk-${brand}-pct`).value) || 0;
             const multiplier = 1 + (pct / 100);
-            const pricing = loadPricing();
-            const brandPricing = pricing[brand] || {};
             const inkoop = brand === 'bodaq' ? BODAQ_INKOOP : COVERSTYL_INKOOP;
             const customPrices = JSON.parse(localStorage.getItem('customProductPrices') || '{}');
+            const products = brand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
             
             let html = '<div style="background: #f8f9fa; border-radius: 10px; padding: 15px; margin-top: 10px;">';
             html += `<strong style="color: ${pct >= 0 ? '#28a745' : '#dc3545'};">${pct >= 0 ? '📈' : '📉'} ${pct >= 0 ? '+' : ''}${pct}% aanpassing</strong>`;
             
-            // Category prices preview
-            html += '<div style="margin-top: 12px;"><strong>Categorieprijzen:</strong></div>';
-            const defaults = DEFAULT_PRICES[brand] || {};
-            Object.keys(brandPricing).length > 0 || Object.keys(defaults).length > 0;
-            const cats = {...defaults, ...brandPricing};
-            
-            Object.entries(cats).sort().forEach(([cat, price]) => {
-                const currentPrice = brandPricing[cat] || price;
-                const newPrice = Math.round(currentPrice * multiplier * 100) / 100;
-                const diff = newPrice - currentPrice;
-                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
+            // Show some example prices
+            html += '<div style="margin-top: 12px;"><strong>Voorbeelden:</strong></div>';
+            let shown = 0;
+            for (const p of products) {
+                if (shown >= 5) break;
+                const currentStr = customPrices[p.code] || (inkoop[p.code] ? inkoop[p.code] : null);
+                if (!currentStr) continue;
+                const current = customPrices[p.code] ? parseFloat(customPrices[p.code]) : parseInkoopPrice(currentStr);
+                if (current <= 0) continue;
+                const newPrice = Math.round(current * multiplier * 100) / 100;
+                const diff = newPrice - current;
                 html += `<div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e9ecef; font-size: 13px;">
-                    <span>${info.icon} ${info.name}</span>
-                    <span>€${currentPrice.toFixed(2)} → <strong style="color: ${pct >= 0 ? '#28a745' : '#dc3545'};">€${newPrice.toFixed(2)}</strong> 
+                    <span>${p.code} (${p.category})</span>
+                    <span>€${current.toFixed(2)} → <strong style="color: ${pct >= 0 ? '#28a745' : '#dc3545'};">€${newPrice.toFixed(2)}</strong> 
                     <small>(${diff >= 0 ? '+' : ''}€${diff.toFixed(2)})</small></span>
                 </div>`;
-            });
+                shown++;
+            }
 
-            // Count affected inkoop prices
-            const products = brand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
-            let inkoopCount = 0;
-            let customCount = 0;
+            // Count totals
+            let totalCount = 0;
             products.forEach(p => {
-                if (customPrices[p.code]) customCount++;
-                else if (inkoop[p.code]) inkoopCount++;
+                if (customPrices[p.code] || inkoop[p.code]) totalCount++;
             });
 
             html += `<div style="margin-top: 12px; font-size: 13px; color: #666;">
-                <strong>Individuele inkoopprijzen:</strong> ${inkoopCount} standaard + ${customCount} aangepaste prijzen worden ook aangepast.
+                <strong>Totaal:</strong> ${totalCount} folieprijzen worden aangepast.
             </div>`;
             
             html += '</div>';
@@ -764,49 +789,36 @@
                 return;
             }
 
-            const confirmMsg = `Weet je zeker dat je alle ${brand.charAt(0).toUpperCase() + brand.slice(1)} prijzen wilt aanpassen met ${pct >= 0 ? '+' : ''}${pct}%?\n\nDit geldt voor:\n• Alle categorieprijzen\n• Alle individuele inkoopprijzen\n\nDit kan niet automatisch ongedaan worden gemaakt.`;
+            const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+            const confirmMsg = `Weet je zeker dat je alle ${brandName} folieprijzen wilt aanpassen met ${pct >= 0 ? '+' : ''}${pct}%?\n\nDit kan niet automatisch ongedaan worden gemaakt.`;
             if (!confirm(confirmMsg)) return;
 
             const multiplier = 1 + (pct / 100);
-
-            // 1. Update category prices
-            const pricing = loadPricing();
-            const defaults = DEFAULT_PRICES[brand] || {};
-            if (!pricing[brand]) pricing[brand] = {};
-            
-            const allCats = {...defaults, ...pricing[brand]};
-            Object.keys(allCats).forEach(cat => {
-                const current = pricing[brand][cat] || defaults[cat] || 45;
-                pricing[brand][cat] = Math.round(current * multiplier * 100) / 100;
-            });
-            localStorage.setItem('categoryPricing', JSON.stringify(pricing));
-
-            // 2. Update individual product inkoop prices (customProductPrices)
             const customPrices = JSON.parse(localStorage.getItem('customProductPrices') || '{}');
             const inkoop = brand === 'bodaq' ? BODAQ_INKOOP : COVERSTYL_INKOOP;
             const products = brand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
+            let count = 0;
             
             products.forEach(p => {
                 if (customPrices[p.code]) {
-                    // Already has custom price — adjust it
                     const current = parseFloat(customPrices[p.code]);
                     customPrices[p.code] = (Math.round(current * multiplier * 100) / 100).toFixed(2);
+                    count++;
                 } else if (inkoop[p.code]) {
-                    // No custom price yet — create one from default inkoop * multiplier
                     const current = parseInkoopPrice(inkoop[p.code]);
                     if (current > 0) {
                         customPrices[p.code] = (Math.round(current * multiplier * 100) / 100).toFixed(2);
+                        count++;
                     }
                 }
             });
             localStorage.setItem('customProductPrices', JSON.stringify(customPrices));
 
             // Refresh UI
-            renderPricing();
             loadColorList();
             previewBulk(brand);
 
-            alert(`✅ ${brand.charAt(0).toUpperCase() + brand.slice(1)} prijzen aangepast met ${pct >= 0 ? '+' : ''}${pct}%!\n\nCategorieprijzen en inkoopprijzen zijn bijgewerkt.\nGa naar het Prijzen- of Kleuren-tabblad om de nieuwe prijzen te zien.`);
+            alert(`✅ ${brandName}: ${count} folieprijzen aangepast met ${pct >= 0 ? '+' : ''}${pct}%!\n\nGa naar Kleuren & Prijzen om de nieuwe prijzen te zien.`);
         }
 
         let currentColorBrand = 'bodaq';
