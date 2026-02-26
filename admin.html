@@ -237,7 +237,7 @@
             
             <div class="info-box">
                 <strong>💡 Info:</strong> Hier zie je alle aanvragen die klanten via de calculator hebben verstuurd. 
-                Inclusief interne details zoals benodigde foliemeters per onderdeel.
+                Inclusief interne details zoals benodigde foliemeters. Je ontvangt een melding via WhatsApp of email.
             </div>
 
             <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
@@ -625,10 +625,12 @@
                 return;
             }
 
+            const savedSettings = JSON.parse(localStorage.getItem('calculatorSettings') || '{}');
+            const myPhone = savedSettings.contact?.phone || '0631917022';
+
             const reversed = [...aanvragen].reverse();
             list.innerHTML = reversed.map((a) => {
                 let samenstellingHTML = '';
-                
                 if (a.samenstelling.deurtjes && a.samenstelling.deurtjes.length > 0) {
                     samenstellingHTML += '<div>🚪 Deurtjes: ' + a.samenstelling.deurtjes.map(d => `${d.aantal}× ${d.breedte}×${d.hoogte}cm`).join(', ') + '</div>';
                 }
@@ -645,10 +647,6 @@
                     samenstellingHTML += `<div>🔲 Hoekkasten: ${a.samenstelling.hoekkast}</div>`;
                 }
 
-                const savedSettings = JSON.parse(localStorage.getItem('calculatorSettings') || '{}');
-                const myPhone = savedSettings.contact?.phone || '0631917022';
-                const myEmail = savedSettings.contact?.email || 'info@folievoordelen.nl';
-
                 const waPhone = (a.klant.telefoon || '').replace(/\s/g, '').replace(/^0/, '31');
 
                 return `
@@ -660,7 +658,7 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 20px; font-weight: bold; color: #333;">${a.prijsIndicatie}</span>
-                            <button onclick="deleteAanvraag('${a.nr}')" title="Verwijder aanvraag" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px; opacity: 0.5; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">🗑️</button>
+                            <button onclick="deleteAanvraag('${a.nr}')" title="Verwijder" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px; opacity: 0.5; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">🗑️</button>
                         </div>
                     </div>
                     
@@ -688,16 +686,16 @@
                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap;">
                         <a href="mailto:${a.klant.email}?subject=Re: Uw aanvraag ${a.nr} - Folievoordelen&body=Beste ${a.klant.naam},%0A%0ABedankt voor uw interesse in Folievoordelen! Wat leuk dat u overweegt om uw keuken een nieuw leven te geven.%0A%0AIk heb uw aanvraag (${a.nr}) voor ${a.folie.merk} ${a.folie.code} in goede orde ontvangen.%0A%0AGraag kom ik vrijblijvend bij u langs om de mogelijkheden te bespreken en een offerte op maat te maken. Zou u mij laten weten welke dag en tijdstip u het beste uitkomt?%0A%0AMocht u in de tussentijd vragen hebben, dan kunt u mij altijd bereiken via telefoon of WhatsApp.%0A%0AMet vriendelijke groet,%0ARik Lentjes%0AFolievoordelen%0A${myPhone}" 
                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #0078d4; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
-                            📧 Mail klant
+                            📧 Mail
                         </a>
-                        <a href="https://wa.me/${waPhone}?text=Hallo ${encodeURIComponent(a.klant.naam)},%20bedankt%20voor%20uw%20aanvraag%20(${a.nr})%20voor%20${encodeURIComponent(a.folie.merk)}%20${encodeURIComponent(a.folie.code)}.%20" 
+                        <a href="https://wa.me/${waPhone}?text=${encodeURIComponent('Hallo ' + a.klant.naam + ', bedankt voor uw interesse in Folievoordelen! Ik heb uw aanvraag (' + a.nr + ') voor ' + a.folie.merk + ' ' + a.folie.code + ' ontvangen. Wanneer zou het u schikken voor een vrijblijvend bezoek aan huis? Groet, Rik')}" 
                            target="_blank"
                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #25d366; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
-                            💬 WhatsApp klant
+                            💬 WhatsApp
                         </a>
                         <a href="tel:${a.klant.telefoon}" 
                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
-                            📱 Bel klant
+                            📱 Bel
                         </a>
                     </div>
                 </div>`;
@@ -714,11 +712,10 @@
 
         function clearAanvragen() {
             const aanvragen = JSON.parse(localStorage.getItem('aanvragen') || '[]');
-            if (aanvragen.length === 0) { alert('Er zijn geen aanvragen om te wissen.'); return; }
+            if (aanvragen.length === 0) { alert('Er zijn geen aanvragen.'); return; }
             if (confirm(`Weet je zeker dat je alle ${aanvragen.length} aanvragen wilt verwijderen?\n\nDit kan niet ongedaan worden gemaakt.`)) {
                 localStorage.removeItem('aanvragen');
                 renderAanvragen();
-                alert('✅ Alle aanvragen verwijderd.');
             }
         }
 
