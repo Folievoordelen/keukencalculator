@@ -244,7 +244,7 @@
                 <input type="text" id="aanvraagSearch" placeholder="🔍 Zoek op naam, nummer of plaats..." 
                        onkeyup="filterAanvragen()"
                        style="flex: 1; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 16px;">
-                <button onclick="clearAanvragen()" style="padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🗑️ Alles wissen</button>
+                <button onclick="clearAanvragen()" style="padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; white-space: nowrap;">🗑️ Alles wissen</button>
             </div>
 
             <div id="aanvragenList"></div>
@@ -658,7 +658,10 @@
                             <span style="background: #d4af37; color: #1a1a1a; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px;">${a.nr}</span>
                             <span style="margin-left: 10px; color: #666; font-size: 14px;">${a.datum}</span>
                         </div>
-                        <span style="font-size: 20px; font-weight: bold; color: #333;">${a.prijsIndicatie}</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 20px; font-weight: bold; color: #333;">${a.prijsIndicatie}</span>
+                            <button onclick="deleteAanvraag('${a.nr}')" title="Verwijder aanvraag" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px; opacity: 0.5; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">🗑️</button>
+                        </div>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -683,7 +686,7 @@
                     ${a.opmerkingen ? '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 13px;"><strong>💬 Opmerking:</strong> ' + a.opmerkingen + '</div>' : ''}
                     
                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <a href="mailto:${a.klant.email}?subject=Re: Uw aanvraag ${a.nr} - Folievoordelen&body=Beste ${a.klant.naam},%0A%0ABedankt voor uw aanvraag (${a.nr}) voor ${a.folie.merk} ${a.folie.code}.%0A%0A%0A%0AMet vriendelijke groet,%0ARik Lentjes%0AFolievoordelen%0A${myPhone}" 
+                        <a href="mailto:${a.klant.email}?subject=Re: Uw aanvraag ${a.nr} - Folievoordelen&body=Beste ${a.klant.naam},%0A%0ABedankt voor uw interesse in Folievoordelen! Wat leuk dat u overweegt om uw keuken een nieuw leven te geven.%0A%0AIk heb uw aanvraag (${a.nr}) voor ${a.folie.merk} ${a.folie.code} in goede orde ontvangen.%0A%0AGraag kom ik vrijblijvend bij u langs om de mogelijkheden te bespreken en een offerte op maat te maken. Zou u mij laten weten welke dag en tijdstip u het beste uitkomt?%0A%0AMocht u in de tussentijd vragen hebben, dan kunt u mij altijd bereiken via telefoon of WhatsApp.%0A%0AMet vriendelijke groet,%0ARik Lentjes%0AFolievoordelen%0A${myPhone}" 
                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #0078d4; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">
                             📧 Mail klant
                         </a>
@@ -717,6 +720,14 @@
                 renderAanvragen();
                 alert('✅ Alle aanvragen verwijderd.');
             }
+        }
+
+        function deleteAanvraag(nr) {
+            if (!confirm(`Aanvraag ${nr} verwijderen?`)) return;
+            const aanvragen = JSON.parse(localStorage.getItem('aanvragen') || '[]');
+            const filtered = aanvragen.filter(a => a.nr !== nr);
+            localStorage.setItem('aanvragen', JSON.stringify(filtered));
+            renderAanvragen();
         }
 
         function init() {
