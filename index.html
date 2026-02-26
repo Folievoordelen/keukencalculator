@@ -609,6 +609,17 @@
         };
 
         function init() {
+            // Bezoekersteller
+            try {
+                var stats = JSON.parse(localStorage.getItem('calculatorStats') || '{}');
+                stats.totalVisits = (stats.totalVisits || 0) + 1;
+                var today = new Date().toISOString().split('T')[0];
+                if (!stats.visits) stats.visits = {};
+                stats.visits[today] = (stats.visits[today] || 0) + 1;
+                stats.lastVisit = new Date().toLocaleString('nl-NL');
+                localStorage.setItem('calculatorStats', JSON.stringify(stats));
+            } catch(e) {}
+
             // Laad admin settings uit localStorage als die er zijn
             try {
                 const storedSettings = localStorage.getItem('calculatorSettings');

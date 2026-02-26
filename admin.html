@@ -395,6 +395,10 @@
         <!-- Stats Tab -->
         <div id="stats-tab" class="tab-content">
             <h2>📊 Statistieken</h2>
+            
+            <!-- Bezoekersstatistieken -->
+            <div id="visitorStats" style="margin-bottom: 30px;"></div>
+            
             <div class="stats-grid" id="statsGrid"></div>
             
             <div style="margin-top: 30px;">
@@ -535,6 +539,66 @@
         }
 
         function renderStats() {
+            // Bezoekersstatistieken
+            const visitorDiv = document.getElementById('visitorStats');
+            try {
+                const stats = JSON.parse(localStorage.getItem('calculatorStats') || '{}');
+                const aanvragen = JSON.parse(localStorage.getItem('aanvragen') || '[]');
+                const visits = stats.visits || {};
+                const today = new Date().toISOString().split('T')[0];
+                const todayVisits = visits[today] || 0;
+                
+                // Laatste 7 dagen
+                const last7 = [];
+                for (var i = 6; i >= 0; i--) {
+                    var d = new Date();
+                    d.setDate(d.getDate() - i);
+                    var key = d.toISOString().split('T')[0];
+                    var dagNaam = d.toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' });
+                    last7.push({ datum: dagNaam, aantal: visits[key] || 0 });
+                }
+
+                visitorDiv.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div style="background: linear-gradient(135deg, #d4af37, #c5a028); color: #1a1a1a; padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: bold;">${stats.totalVisits || 0}</div>
+                            <div style="font-size: 13px; opacity: 0.8;">Totaal bezoekers</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #4CAF50, #388E3C); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: bold;">${todayVisits}</div>
+                            <div style="font-size: 13px; opacity: 0.9;">Vandaag</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #1976D2, #1565C0); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: bold;">${aanvragen.length}</div>
+                            <div style="font-size: 13px; opacity: 0.9;">Aanvragen</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #7B1FA2, #6A1B9A); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: bold;">${stats.lastVisit || '-'}</div>
+                            <div style="font-size: 13px; opacity: 0.9;">Laatste bezoek</div>
+                        </div>
+                    </div>
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="margin-top: 0; margin-bottom: 15px;">📈 Bezoekers afgelopen 7 dagen</h3>
+                        <div style="display: flex; align-items: flex-end; gap: 8px; height: 120px;">
+                            ${last7.map(function(dag) {
+                                var maxVal = Math.max.apply(null, last7.map(function(d) { return d.aantal; })) || 1;
+                                var height = Math.max(dag.aantal / maxVal * 100, 4);
+                                return '<div style="flex: 1; text-align: center;">' +
+                                    '<div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">' + dag.aantal + '</div>' +
+                                    '<div style="background: linear-gradient(to top, #d4af37, #f0d060); height: ' + height + 'px; border-radius: 6px 6px 0 0; min-height: 4px;"></div>' +
+                                    '<div style="font-size: 11px; color: #666; margin-top: 4px;">' + dag.datum + '</div>' +
+                                '</div>';
+                            }).join('')}
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button onclick="if(confirm('Bezoekersstatistieken resetten?')){localStorage.removeItem('calculatorStats');renderStats();}" style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">🗑️ Reset teller</button>
+                    </div>
+                `;
+            } catch(e) {
+                visitorDiv.innerHTML = '<p style="color: #999;">Geen bezoekersdata beschikbaar.</p>';
+            }
+
             const bodaqCounts = countCategories(BODAQ_PRODUCTS);
             const coverstylCounts = countCategories(COVERSTYL_PRODUCTS);
             
