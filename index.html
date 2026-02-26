@@ -1339,6 +1339,8 @@
             aanvragen.push(aanvraag);
             localStorage.setItem('aanvragen', JSON.stringify(aanvragen));
             
+            const contactSettings = getContactSettings();
+            
             if (contactMethod === 'whatsapp') {
                 // WhatsApp bericht (compacter)
                 let whatsappText = `*AFSPRAAK AANVRAAG*\n\n`;
@@ -1391,7 +1393,6 @@
                     `${notes ? 'OPMERKINGEN KLANT:%0A' + notes + '%0A%0A' : ''}` +
                     `--- Verzonden via Folievoordelen Calculator ---`;
                 
-                const contactSettings = getContactSettings();
                 window.location.href = `mailto:${contactSettings.email}?subject=${subject}&body=${body}`;
                 
                 setTimeout(() => {
