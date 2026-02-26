@@ -1342,39 +1342,54 @@
             const contactSettings = getContactSettings();
             
             if (contactMethod === 'whatsapp') {
-                // WhatsApp bericht (compacter)
-                let whatsappText = `*AFSPRAAK AANVRAAG*\n\n`;
-                whatsappText += `Naam: ${name}\n`;
-                whatsappText += `Tel: ${phone}\n`;
-                whatsappText += `Adres: ${fullAddress}\n\n`;
-                whatsappText += `*Folie:* ${brand} ${selectedColor.code}\n`;
-                whatsappText += `*Samenstelling:*\n`;
+                let whatsappText = '*AFSPRAAK AANVRAAG*\n\n';
+                whatsappText += 'Naam: ' + name + '\n';
+                whatsappText += 'Tel: ' + phone + '\n';
+                whatsappText += 'Adres: ' + fullAddress + '\n\n';
+                whatsappText += '*Folie:* ' + brand + ' ' + selectedColor.code + '\n';
+                whatsappText += '*Samenstelling:*\n';
                 if (savedDeurtjes.length > 0) {
-                    whatsappText += `Kastdeurtjes:\n`;
-                    savedDeurtjes.forEach(d => { whatsappText += `  - ${d.aantal}x ${d.breedte}x${d.hoogte}cm\n`; });
+                    savedDeurtjes.forEach(function(d) { whatsappText += '- ' + d.aantal + 'x ' + d.breedte + 'x' + d.hoogte + 'cm\n'; });
                 }
                 if (savedLades.length > 0) {
-                    whatsappText += `Lades:\n`;
-                    savedLades.forEach(l => { whatsappText += `  - ${l.aantal}x ${l.breedte}x${l.hoogte}cm\n`; });
+                    savedLades.forEach(function(l) { whatsappText += '- ' + l.aantal + 'x ' + l.breedte + 'x' + l.hoogte + 'cm\n'; });
                 }
                 if (savedPlintlijsten.length > 0) {
-                    whatsappText += `Plintlijsten:\n`;
-                    savedPlintlijsten.forEach(p => { whatsappText += `  - ${p.aantal}x ${p.lengte}m x ${p.hoogte}cm hoog\n`; });
+                    savedPlintlijsten.forEach(function(p) { whatsappText += '- ' + p.aantal + 'x ' + p.lengte + 'm x ' + p.hoogte + 'cm\n'; });
                 }
                 if (savedZijkanten.length > 0) {
-                    whatsappText += `Zijkanten:\n`;
-                    savedZijkanten.forEach(z => { whatsappText += `  - ${z.aantal}x ${z.breedte}x${z.hoogte}cm\n`; });
+                    savedZijkanten.forEach(function(z) { whatsappText += '- ' + z.aantal + 'x ' + z.breedte + 'x' + z.hoogte + 'cm\n'; });
                 }
                 if (hoekkast > 0) {
-                    whatsappText += `Open hoekkast: ${hoekkast}\n`;
+                    whatsappText += '- Hoekkast: ' + hoekkast + '\n';
                 }
-                whatsappText += `\n*Indicatief:* ${totalPrice}\n\n`;
-                if (notes) whatsappText += `Opmerking: ${notes}\n\n`;
-                whatsappText += `Graag een afspraak inplannen voor een vrijblijvende offerte aan huis.`;
+                whatsappText += '\n*Indicatief:* ' + totalPrice + '\n';
+                if (notes) whatsappText += '\nOpmerking: ' + notes + '\n';
+                whatsappText += '\nGraag een afspraak voor een vrijblijvende offerte aan huis.';
                 
-                const waUrl = `https://wa.me/${contactSettings.whatsapp}?text=${encodeURIComponent(whatsappText)}`;
+                var waNumber = contactSettings.whatsapp;
+                var waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(whatsappText);
+                
                 closeContactPopup();
-                window.location.href = waUrl;
+                
+                // Probeer eerst window.open (desktop), dan location (mobiel/iframe)
+                setTimeout(function() {
+                    try {
+                        var opened = window.open(waUrl, '_blank');
+                        if (!opened) {
+                            // Fallback: maak een link en klik erop
+                            var a = document.createElement('a');
+                            a.href = waUrl;
+                            a.target = '_blank';
+                            a.rel = 'noopener';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        }
+                    } catch(e) {
+                        window.location.href = waUrl;
+                    }
+                }, 300);
             } else {
                 // Email (met betere formatting)
                 const subject = `[AANVRAAG] ${name} - ${brand} ${selectedColor.code} - ${totalPrice}`;
