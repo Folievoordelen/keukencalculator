@@ -278,16 +278,12 @@
             </div>
 
             <div class="brand-tabs">
-                <button class="brand-tab active" onclick="switchBrand('bodaq')">
-                    Bodaq (<span id="bodaqCount">0</span> kleuren)
-                </button>
-                <button class="brand-tab" onclick="switchBrand('coverstyl')">
-                    Coverstyl (<span id="coverstylCount">0</span> kleuren)
-                </button>
-                <button class="brand-tab" onclick="switchBrand('soif')">
-                    SOIF (<span id="soifCount">0</span> kleuren)
-                </button>
+                <button class="brand-tab active" onclick="switchBrand('bodaq')">Bodaq</button>
+                <button class="brand-tab" onclick="switchBrand('coverstyl')">Coverstyl</button>
+                <button class="brand-tab" onclick="switchBrand('soif')">SOIF</button>
             </div>
+
+            <div id="brandInfo" style="text-align: center; padding: 6px 0 10px; font-size: 14px; color: #888; font-weight: 500;"></div>
 
             <div id="categoryFilters" class="category-filters"></div>
 
@@ -653,9 +649,7 @@
             }
             
             const disabledColorsInit = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": [], "soif": []}');
-            document.getElementById('bodaqCount').textContent = BODAQ_PRODUCTS.filter(p => !(disabledColorsInit.bodaq || []).includes(p.code)).length;
-            document.getElementById('coverstylCount').textContent = COVERSTYL_PRODUCTS.filter(p => !(disabledColorsInit.coverstyl || []).includes(p.code)).length;
-            document.getElementById('soifCount').textContent = SOIF_PRODUCTS.filter(p => !(disabledColorsInit.soif || []).includes(p.code)).length;
+            updateBrandInfo();
             loadColors();
         }
 
@@ -750,12 +744,21 @@
             renderCategoryFilters();
         }
 
+        function updateBrandInfo() {
+            const disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": [], "soif": []}');
+            const brandNames = { bodaq: 'Bodaq', coverstyl: 'Coverstyl', soif: 'SOIF' };
+            const products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : (currentBrand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS);
+            const count = products.filter(p => !(disabledColors[currentBrand] || []).includes(p.code)).length;
+            document.getElementById('brandInfo').textContent = brandNames[currentBrand] + ' — ' + count + ' kleuren beschikbaar';
+        }
+
         function switchBrand(brand) {
             currentBrand = brand;
             currentCategory = 'all';
             document.querySelectorAll('.brand-tab').forEach((tab, idx) => {
                 tab.classList.toggle('active', (idx === 0 && brand === 'bodaq') || (idx === 1 && brand === 'coverstyl') || (idx === 2 && brand === 'soif'));
             });
+            updateBrandInfo();
             loadColors();
             selectedColor = null;
             document.getElementById('selectedColorDisplay').classList.remove('visible');
