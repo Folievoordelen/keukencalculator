@@ -281,6 +281,9 @@
                 <button class="brand-tab" onclick="switchBrand('coverstyl')">
                     Coverstyl (<span id="coverstylCount">0</span> kleuren)
                 </button>
+                <button class="brand-tab" onclick="switchBrand('soif')">
+                    SOIF (<span id="soifCount">0</span> kleuren)
+                </button>
             </div>
 
             <div id="categoryFilters" class="category-filters"></div>
@@ -394,7 +397,7 @@
         <div class="price-display">
             <div style="font-size: 16px; opacity: 0.85; margin-bottom: 10px; font-weight: 600;">Totale prijs</div>
             <div class="price-amount" id="totalPrice">€ 0,00</div>
-            <div style="font-size: 14px; opacity: 0.75;">KOR-regeling • Geen BTW</div>
+
         </div>
 
         <div class="breakdown">
@@ -513,7 +516,7 @@
     </div>
 
     <script>
-        if (typeof BODAQ_PRODUCTS === 'undefined' || typeof COVERSTYL_PRODUCTS === 'undefined') {
+        if (typeof BODAQ_PRODUCTS === 'undefined' || typeof COVERSTYL_PRODUCTS === 'undefined' || typeof SOIF_PRODUCTS === 'undefined') {
             alert('FOUT: calculator_products.js niet gevonden!');
         }
 
@@ -583,6 +586,9 @@
             },
             coverstyl: {
                 Wood: 78, Solid: 72, Stone: 83, Concrete: 80, Metal: 88, Textile: 80, Glitter: 95, Leather: 85, Texture: 78, Other: 75
+            },
+            soif: {
+                Wood: 80, Solid: 75, Stone: 85, Metal: 90, Textile: 82, Leather: 85, Other: 80
             }
         };
 
@@ -601,6 +607,7 @@
                 lade: 15,       // Per lade (arbeid)
                 plintlijst: 12,
                 hoekkast: 35,  // Prijs per open hoekkast
+                zijkant: 30,   // Per zijkant (arbeid)
                 emballage: 25
             },
             folie: {
@@ -642,16 +649,17 @@
                 console.log('Geen admin settings gevonden, gebruik defaults');
             }
             
-            const disabledColorsInit = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": []}');
+            const disabledColorsInit = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": [], "soif": []}');
             document.getElementById('bodaqCount').textContent = BODAQ_PRODUCTS.filter(p => !(disabledColorsInit.bodaq || []).includes(p.code)).length;
             document.getElementById('coverstylCount').textContent = COVERSTYL_PRODUCTS.filter(p => !(disabledColorsInit.coverstyl || []).includes(p.code)).length;
+            document.getElementById('soifCount').textContent = SOIF_PRODUCTS.filter(p => !(disabledColorsInit.soif || []).includes(p.code)).length;
             loadColors();
         }
 
         function renderCategoryFilters() {
-            const disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": []}');
+            const disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": [], "soif": []}');
             const currentBrandDisabled = disabledColors[currentBrand] || [];
-            const products = (currentBrand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS).filter(p => !currentBrandDisabled.includes(p.code));
+            const products = (currentBrand === 'bodaq' ? BODAQ_PRODUCTS : (currentBrand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS)).filter(p => !currentBrandDisabled.includes(p.code));
             const counts = {};
             products.forEach(p => counts[p.category] = (counts[p.category] || 0) + 1);
             
@@ -707,9 +715,9 @@
 
         function loadColors() {
             // Laad uitgeschakelde kleuren uit localStorage
-            const disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": []}');
+            const disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": [], "soif": []}');
             const currentBrandDisabled = disabledColors[currentBrand] || [];
-            let products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
+            let products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : (currentBrand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS);
             // Filter uitgeschakelde kleuren
             products = products.filter(p => !currentBrandDisabled.includes(p.code));
             if (currentCategory !== 'all') {
@@ -743,7 +751,7 @@
             currentBrand = brand;
             currentCategory = 'all';
             document.querySelectorAll('.brand-tab').forEach((tab, idx) => {
-                tab.classList.toggle('active', (idx === 0 && brand === 'bodaq') || (idx === 1 && brand === 'coverstyl'));
+                tab.classList.toggle('active', (idx === 0 && brand === 'bodaq') || (idx === 1 && brand === 'coverstyl') || (idx === 2 && brand === 'soif'));
             });
             loadColors();
             selectedColor = null;
@@ -766,7 +774,7 @@
         }
 
         function selectColor(code) {
-            const products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
+            const products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : (currentBrand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS);
             const product = products.find(p => p.code === code);
             if (product) {
                 // Check voor handmatig aangepaste prijs in localStorage
@@ -829,7 +837,7 @@
             selectColor(code);
             
             // Dan lightbox openen
-            const products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
+            const products = currentBrand === 'bodaq' ? BODAQ_PRODUCTS : (currentBrand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS);
             const product = products.find(p => p.code === code);
             if (product) {
                 document.getElementById('lightboxImage').src = product.image;
@@ -1119,14 +1127,15 @@
                 plintlijstTotal += folieKosten + arbeidKosten;
             });
 
-            // ZIJKANTEN (zoals deurtjes)
+            // ZIJKANTEN (folie + arbeid per stuk)
             savedZijkanten.forEach(item => {
                 totalZijkanten += item.aantal;
                 // Hoogte afronden naar boven per hele meter = aantal meters folie per zijkant
                 const metersPerZijkant = Math.ceil(item.hoogte / 100);
                 const totalMeters = metersPerZijkant * item.aantal;
                 const folieKosten = totalMeters * item.foliePrijs;
-                zijkantenTotal += folieKosten;
+                const arbeidKosten = item.aantal * settings.prijzen.zijkant;
+                zijkantenTotal += folieKosten + arbeidKosten;
             });
 
             const hoekkastTotal = hoekkast * settings.prijzen.hoekkast;
@@ -1137,7 +1146,7 @@
             
             // Toon geselecteerde kleur bovenaan
             if (selectedColor) {
-                const brandName = selectedColor.brand === 'bodaq' ? 'Bodaq' : 'Coverstyl';
+                const brandName = selectedColor.brand === 'bodaq' ? 'Bodaq' : (selectedColor.brand === 'soif' ? 'SOIF' : 'Coverstyl');
                 summaryHTML += `<div style="background: linear-gradient(135deg, #d4af37 0%, #c5a028 100%); padding: 12px; border-radius: 8px; margin-bottom: 15px; color: #1a1a1a;">
                     <strong style="font-size: 16px;">🎨 Gekozen folie:</strong><br>
                     <span style="font-size: 15px;">${brandName} ${selectedColor.code} - ${selectedColor.name}</span>
@@ -1291,7 +1300,7 @@
             const fullAddress = `${street} ${housenumber}${addition ? ' ' + addition : ''}, ${zipcode} ${city}`;
             const contactMethod = document.querySelector('input[name="contact-method"]:checked').value;
             
-            const brand = selectedColor.brand === 'bodaq' ? 'Bodaq' : 'Coverstyl';
+            const brand = selectedColor.brand === 'bodaq' ? 'Bodaq' : (selectedColor.brand === 'soif' ? 'SOIF' : 'Coverstyl');
             const totalPrice = document.getElementById('totalPrice').textContent;
             const totalFolieMeters = calculateTotalFolieMeters();
             

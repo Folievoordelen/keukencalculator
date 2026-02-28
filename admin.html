@@ -217,6 +217,7 @@
             <div class="tabs" style="margin-top: 20px; border-bottom: none;">
                 <button class="tab active" onclick="switchColorBrand('bodaq')" id="color-tab-bodaq">🟡 Bodaq</button>
                 <button class="tab" onclick="switchColorBrand('coverstyl')" id="color-tab-coverstyl">🔵 Coverstyl</button>
+                <button class="tab" onclick="switchColorBrand('soif')" id="color-tab-soif">🟠 SOIF</button>
             </div>
 
             <div style="margin: 20px 0;">
@@ -227,6 +228,7 @@
 
             <div id="bodaqColorList" class="color-list"></div>
             <div id="coverstylColorList" class="color-list" style="display: none;"></div>
+            <div id="soifColorList" class="color-list" style="display: none;"></div>
 
             <button class="save-button" onclick="saveColorSettings()">💾 Kleuren Instellingen Opslaan</button>
         </div>
@@ -361,6 +363,12 @@
                             <input type="number" id="prijs-rekje" value="8" step="0.5">
                         </div>
                         <div class="price-input">
+                            <label>Zijkant (per stuk)</label>
+                            <input type="number" id="prijs-zijkant" value="30" step="0.5">
+                        </div>
+                    </div>
+                    <div class="price-row">
+                        <div class="price-input">
                             <label>Emballage (vast)</label>
                             <input type="number" id="prijs-emballage" value="25" step="1">
                         </div>
@@ -410,11 +418,15 @@
                 <h3>Coverstyl Categorieën</h3>
                 <div id="coverstylStats" style="margin-top: 15px;"></div>
             </div>
+            <div style="margin-top: 30px;">
+                <h3>SOIF Categorieën</h3>
+                <div id="soifStats" style="margin-top: 15px;"></div>
+            </div>
         </div>
     </div>
     <script>
-        if (typeof BODAQ_PRODUCTS === 'undefined' || typeof COVERSTYL_PRODUCTS === 'undefined') {
-            alert('FOUT: calculator_products.js niet gevonden!');
+        if (typeof BODAQ_PRODUCTS === 'undefined' || typeof COVERSTYL_PRODUCTS === 'undefined' || typeof SOIF_PRODUCTS === 'undefined') {
+            alert('FOUT: calculator_products.js niet gevonden of SOIF_PRODUCTS ontbreekt!');
         }
 
         const CATEGORY_INFO = {
@@ -448,6 +460,14 @@
                 Glitter: 52,
                 Leather: 48,
                 Texture: 44
+            },
+            soif: {
+                Wood: 45,
+                Solid: 42,
+                Stone: 48,
+                Metal: 50,
+                Textile: 47,
+                Leather: 48
             }
         };
 
@@ -505,6 +525,7 @@
                     plintlijst: parseFloat(document.getElementById('prijs-plintlijst').value),
                     hoekkast: parseFloat(document.getElementById('prijs-hoekkast').value),
                     rekje: parseFloat(document.getElementById('prijs-rekje').value),
+                    zijkant: parseFloat(document.getElementById('prijs-zijkant').value),
                     emballage: parseFloat(document.getElementById('prijs-emballage').value)
                 },
                 folie: {
@@ -601,13 +622,14 @@
 
             const bodaqCounts = countCategories(BODAQ_PRODUCTS);
             const coverstylCounts = countCategories(COVERSTYL_PRODUCTS);
+            const soifCounts = countCategories(SOIF_PRODUCTS);
             
             // Main stats
             const statsGrid = document.getElementById('statsGrid');
             statsGrid.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-label">Totaal Producten</div>
-                    <div class="stat-number">${BODAQ_PRODUCTS.length + COVERSTYL_PRODUCTS.length}</div>
+                    <div class="stat-number">${BODAQ_PRODUCTS.length + COVERSTYL_PRODUCTS.length + SOIF_PRODUCTS.length}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Bodaq Kleuren</div>
@@ -617,9 +639,13 @@
                     <div class="stat-label">Coverstyl Kleuren</div>
                     <div class="stat-number">${COVERSTYL_PRODUCTS.length}</div>
                 </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%);">
+                    <div class="stat-label">SOIF Kleuren</div>
+                    <div class="stat-number">${SOIF_PRODUCTS.length}</div>
+                </div>
                 <div class="stat-card">
                     <div class="stat-label">Categorieën</div>
-                    <div class="stat-number">${new Set([...Object.keys(bodaqCounts), ...Object.keys(coverstylCounts)]).size}</div>
+                    <div class="stat-number">${new Set([...Object.keys(bodaqCounts), ...Object.keys(coverstylCounts), ...Object.keys(soifCounts)]).size}</div>
                 </div>
             `;
 
@@ -646,6 +672,18 @@
                     </div>
                 `;
             }).join('');
+
+            // SOIF breakdown
+            document.getElementById('soifStats').innerHTML = Object.entries(soifCounts).sort().map(([cat, count]) => {
+                const info = CATEGORY_INFO[cat] || { icon: '📋', name: cat };
+                const pct = ((count / SOIF_PRODUCTS.length) * 100).toFixed(1);
+                return `
+                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; margin-bottom: 8px; border-radius: 8px;">
+                        <span><strong>${info.icon} ${info.name}</strong></span>
+                        <span>${count} kleuren (${pct}%)</span>
+                    </div>
+                `;
+            }).join('');
         }
 
         function loadSettings() {
@@ -657,6 +695,7 @@
                 document.getElementById('prijs-plintlijst').value = settings.prijzen?.plintlijst || 12;
                 document.getElementById('prijs-hoekkast').value = settings.prijzen?.hoekkast || 35;
                 document.getElementById('prijs-rekje').value = settings.prijzen?.rekje || 8;
+                document.getElementById('prijs-zijkant').value = settings.prijzen?.zijkant || 30;
                 document.getElementById('prijs-emballage').value = settings.prijzen?.emballage || 25;
                 document.getElementById('verspilling').value = settings.folie?.verspilling_percentage || 15;
                 document.getElementById('contact-email').value = settings.contact?.email || 'info@folievoordelen.nl';
@@ -796,6 +835,7 @@
             console.log('✅ Admin Panel geladen');
             console.log(`📊 Bodaq: ${BODAQ_PRODUCTS.length} producten`);
             console.log(`📊 Coverstyl: ${COVERSTYL_PRODUCTS.length} producten`);
+            console.log(`📊 SOIF: ${SOIF_PRODUCTS.length} producten`);
         }
 
         window.addEventListener('DOMContentLoaded', init);
@@ -814,9 +854,9 @@
         function previewBulk(brand) {
             const pct = parseFloat(document.getElementById(`bulk-${brand}-pct`).value) || 0;
             const multiplier = 1 + (pct / 100);
-            const inkoop = brand === 'bodaq' ? BODAQ_INKOOP : COVERSTYL_INKOOP;
+            const inkoop = brand === 'bodaq' ? BODAQ_INKOOP : (brand === 'soif' ? SOIF_INKOOP : COVERSTYL_INKOOP);
             const customPrices = JSON.parse(localStorage.getItem('customProductPrices') || '{}');
-            const products = brand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
+            const products = brand === 'bodaq' ? BODAQ_PRODUCTS : (brand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS);
             
             let html = '<div style="background: #f8f9fa; border-radius: 10px; padding: 15px; margin-top: 10px;">';
             html += `<strong style="color: ${pct >= 0 ? '#28a745' : '#dc3545'};">${pct >= 0 ? '📈' : '📉'} ${pct >= 0 ? '+' : ''}${pct}% aanpassing</strong>`;
@@ -867,8 +907,8 @@
 
             const multiplier = 1 + (pct / 100);
             const customPrices = JSON.parse(localStorage.getItem('customProductPrices') || '{}');
-            const inkoop = brand === 'bodaq' ? BODAQ_INKOOP : COVERSTYL_INKOOP;
-            const products = brand === 'bodaq' ? BODAQ_PRODUCTS : COVERSTYL_PRODUCTS;
+            const inkoop = brand === 'bodaq' ? BODAQ_INKOOP : (brand === 'soif' ? SOIF_INKOOP : COVERSTYL_INKOOP);
+            const products = brand === 'bodaq' ? BODAQ_PRODUCTS : (brand === 'soif' ? SOIF_PRODUCTS : COVERSTYL_PRODUCTS);
             let count = 0;
             
             products.forEach(p => {
@@ -896,14 +936,17 @@
         let currentColorBrand = 'bodaq';
         const BODAQ_INKOOP = {"APZ05":"€34,03","APZ14":"€34,03","APZ18":"€34,03","APZ25":"€34,03","APZ26":"€34,03","BZ910":"€25,51","CP202":"€25,51","DM017":"€25,51","DM036":"€25,51","DM801":"€25,51","DW710":"€25,51","DW724":"€25,51","DW801":"€25,51","HD711":"€25,51","HS204":"€23,80","HS205":"€23,80","LM202":"€22,96","LS102":"€22,96","LS103":"€22,96","LS104":"€22,96","LS106":"€22,96","LW107":"€26,03","LW110":"€26,03","LW112":"€26,03","LW115":"€26,03","LW119":"€26,03","LW120":"€26,03","NS121":"€25,51","NS401":"€25,51","NS402":"€25,51","NS403":"€25,51","NS410":"€25,51","NS601":"€25,51","NS602":"€25,51","NS703":"€25,51","NS704":"€25,51","NS705":"€25,51","NS707":"€25,51","NS708":"€25,51","NS710":"€25,51","NS711":"€25,51","NS804":"€25,51","NS806":"€25,51","NS814":"€25,51","NS815":"€25,51","NS820":"€25,51","NS895":"€25,51","PM003":"€29,78","PM004":"€29,78","PM006":"€29,78","PM007":"€29,78","PM008":"€29,78","PM009":"€29,78","PM011":"€29,78","PM015":"€29,78","PM016":"€29,78","PM018":"€29,78","PNC41":"€25,51","PNC42":"€25,51","PNC43":"€25,51","PNC44":"€25,51","PNC45":"€25,51","PNC46":"€25,51","PNC49":"€25,51","PNC50":"€25,51","PNT01":"€25,51","PNT02":"€25,51","PNT04":"€25,51","PNT05":"€25,51","PNT07":"€25,51","PNT08":"€25,51","PNT09":"€25,51","PNT10":"€25,51","PTW04":"€25,51","PTW05":"€25,51","PTW06":"€25,51","PTW07":"€25,51","PZ901":"€25,51","PZ904":"€25,51","RF007":"€51,11","RF008":"€51,11","RF009":"€51,11","RF011":"€51,11","RM002":"€25,51","RM003":"€25,51","RM004":"€25,51","RM005":"€25,51","RM006":"€25,51","RM007":"€25,51","RM008":"€25,51","RM009":"€25,51","RM011":"€25,51","RM012":"€25,51","RM013":"€25,51","RM022":"€25,51","RM051":"€25,51","S115":"€21,24","S126":"€21,24","S127":"€21,24","S128":"€21,24","S140":"€21,24","S141":"€21,24","S143":"€21,24","S145":"€21,24","S146":"€21,24","S147":"€21,24","S149":"€21,24","S150":"€21,24","S153":"€21,24","S156":"€21,24","S157":"€21,24","S158":"€21,24","S159":"€21,24","S166":"€21,24","S169":"€21,24","S173":"€21,24","S175":"€21,24","S176":"€21,24","S177":"€21,24","S178":"€21,24","S179":"€21,24","S181":"€21,24","S183":"€21,24","S185":"€21,24","S186":"€21,24","S188":"€21,24","S189":"€21,24","S194":"€21,24","S195":"€21,24","S197":"€21,24","S198":"€21,24","S200":"€21,24","S201":"€21,24","S202":"€21,24","S204":"€21,24","S207":"€21,24","S208":"€21,24","S209":"€21,24","S210":"€21,24","S211":"€21,24","S212":"€21,24","S213":"€21,24","S214":"€21,24","S215":"€21,66","S217":"€21,24","S218":"€21,24","S230":"€21,24","S231":"€21,24","S232":"€21,24","S233":"€21,24","S235":"€21,24","S238":"€21,24","S239":"€21,24","S241":"€21,24","S242":"€21,24","S243":"€21,24","S257":"€21,24","SMT01":"€25,51","SMT03":"€25,51","SMT04":"€25,51","SMT05":"€25,51","SMT06":"€25,51","SMT07":"€25,51","SMT10":"€25,51","SMT11":"€25,51","SMT13":"€25,51","SMT14":"€25,51","SMT15":"€25,51","SPW12":"€25,51","SPW13":"€25,51","SPW15":"€25,51","SPW16":"€25,51","SPW17":"€25,51","SPW18":"€25,51","SPW92":"€25,51","SPW93":"€25,51","SPW94":"€25,51","SPW95":"€25,51","SPW96":"€25,51","TNS03":"€34,03","TNS04":"€34,03","TNS05":"€34,03","TNS10":"€34,03","W141":"€22,96","W171":"€22,96","W195":"€22,96","W198":"€22,96","W199":"€22,96","W200":"€22,96","W205":"€22,96","W207":"€22,96","W251":"€22,96","W274":"€22,96","W276":"€22,96","W302":"€22,96","W371":"€22,96","W375":"€22,96","W376":"€22,96","W389":"€22,96","W401":"€22,96","W504":"€22,96","W508":"€22,96","W636":"€22,96","W638":"€22,96","W671":"€22,96","W705":"€22,96","W722":"€22,96","W731":"€22,96","W816":"€22,96","W823":"€22,96","W845":"€22,96","W849":"€22,96","W863":"€22,96","W864":"€22,96","W865":"€22,96","W870":"€22,96","W871":"€22,96","W874":"€22,96","W879":"€22,96","W923":"€22,96","W925":"€22,96","W931":"€22,96","W932":"€22,96","W935":"€22,96","W938":"€22,96","W944":"€22,96","W945":"€22,96","W949":"€22,96","ZSW01":"€25,51","ZSW04":"€25,51","ZX107":"€25,51","ZX111":"€25,51","ZX112":"€25,51","ZX117":"€25,51","ZX118":"€25,51","ZX119":"€25,51","ZX120":"€25,51","ZX123":"€25,51","ZX125":"€25,51","ZX126":"€25,51","ZX128":"€25,51","ZX129":"€25,51","ZX131":"€25,51","ZX132":"€25,51","ZX133":"€25,51","ZX134":"€25,51","ZX135":"€25,51","ZX136":"€25,51","ZX137":"€25,51","ZX138":"€25,51","ZX144":"€25,51","ZX145":"€25,51","ZX146":"€25,51","ZX147":"€25,51","ZX148":"€25,51","ZX149":"€25,51","ZX150":"€25,51","ZX157":"€25,51","ZX158":"€25,51","ZX160":"€25,51","ZX161":"€25,51","ZX165":"€25,51"};
         const COVERSTYL_INKOOP = {"AA14":"€25,67","AA15":"€25,67","AB05":"€25,67","AF03":"€25,67","AF08":"€25,67","AF10":"€25,67","AG14":"€25,67","AG20":"€25,67","AL09":"€29,26","AL11":"€38,57","AL14":"€25,67","AL15":"€38,57","AL24":"€25,67","AL29":"€25,67","AT04":"€25,67","AU01":"€77,06","AU02":"€77,06","AZ07":"€25,67","B1":"€25,67","B3":"€25,67","B4":"€25,67","B5":"€25,67","B50":"€25,67","B6":"€25,67","B8":"€25,67","CT02":"€25,67","CT35":"€25,67","CT58":"€25,67","CT69":"€25,67","CT82":"€25,67","D1":"€25,67","D4":"€25,67","E50":"€25,67","F4":"€25,67","F5":"€25,67","F6":"€25,67","F7":"€25,67","G0":"€25,67","G6":"€25,67","H10":"€25,67","H4":"€25,67","H50":"€25,67","I10":"€25,67","I14":"€25,67","I9":"€25,67","J14":"€25,67","J17":"€25,67","J18":"€25,67","J2":"€25,67","J3":"€19,63","J4":"€19,63","J5":"€19,63","K1":"€19,63","K101":"€77,06","K4":"€19,63","K5":"€19,63","K6":"€19,63","K7":"€19,63","L2":"€19,63","M10":"€19,63","M4":"€19,63","M6":"€19,63","M7":"€19,63","M8":"€19,63","M9":"€19,63","MK13":"€27,39","MK14":"€27,39","MK15":"€27,39","MK18":"€27,39","N3":"€19,63","NE13":"€38,57","NE24":"€29,26","NE26":"€29,26","NE29":"€29,26","NE31":"€27,39","NE32":"€27,39","NE37":"€38,57","NE40":"€38,57","NE41":"€38,57","NE42":"€38,57","NE46":"€25,67","NE47":"€29,26","NE49":"€29,26","NE51":"€29,26","NE54":"€19,63","NE61":"€25,67","NE68":"€25,67","NE70":"€27,39","NE72":"€27,39","NE73":"€59,24","NE74":"€59,24","NE77":"€23,95","NE78":"€23,95","NE79":"€23,95","NE80":"€23,95","NE81":"€23,95","NE82":"€23,95","NF06":"€19,63","NF13":"€23,95","NF14":"€23,95","NF19":"€27,39","NF28":"€25,67","NF29":"€25,67","NF32":"€25,67","NF34":"€25,67","NF36":"€25,67","NF40":"€25,67","NF43":"€25,67","NF44":"€25,67","NF46":"€25,67","NF47":"€25,67","NF55":"€25,67","NF56":"€25,67","NF66":"€25,67","NF73":"€25,67","NF78":"€25,67","NF83":"€25,67","NF98":"€27,39","NF99":"€29,26","NG01":"€29,26","NG02":"€29,26","NG04":"€27,39","NG07":"€59,24","NG11":"€59,24","NG20":"€38,57","NG31":"€27,39","NH02":"€26,01","NH05":"€26,01","NH06":"€26,01","NH08":"€26,01","NH10":"€29,26","NH11":"€27,39","NH15":"€27,39","NH18":"€59,24","NH19":"€59,24","NH21":"€19,63","NH22":"€19,63","NH24":"€19,63","NH27":"€23,95","NH33":"€29,26","NH35":"€29,26","NH36":"€29,26","NH37":"€29,26","NH39":"€29,26","NH40":"€29,26","NH41":"€29,26","NH45":"€27,39","NH46":"€27,39","NH54":"€29,26","NH57":"€27,39","NH60":"€29,26","NH71":"€25,67","NH73":"€25,67","NH75":"€25,67","NH77":"€25,67","NH79":"€25,67","NH80":"€25,67","NH91":"€26,01","NH92":"€26,01","NH93":"€26,01","Q2":"€29,26","Q3":"€29,26","Q50":"€29,26","R10":"€35,13","R11":"€35,13","R12":"€35,13","R13":"€35,13","R14":"€35,13","R15":"€35,13","R16":"€35,13","R17":"€35,13","R18":"€35,13","R19":"€35,13","R5":"€35,13","R6":"€35,13","R7":"€35,13","R8":"€35,13","R9":"€35,13","RM03":"€19,63","RM04":"€19,63","RM06":"€19,63","RM10":"€19,63","RM13":"€19,63","RM23":"€19,63","RM27":"€19,63","RM29":"€19,63","ST02":"€38,57","T12":"€38,57","U10":"€29,26","U19":"€29,26","U20":"€29,26","U21":"€29,26","U50":"€27,39","W6":"€29,26","W7":"€29,26","X51":"€38,57","X52":"€38,57","XL":"€22,04","Z2":"€29,26","high":"€45,92","high-resistance-u20-cement-dark":"€45,92","pvc":"€32,14"};
-        let disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": []}');
+        let disabledColors = JSON.parse(localStorage.getItem('disabledColors') || '{"bodaq": [], "coverstyl": [], "soif": []}');
+        const SOIF_INKOOP = {"BG8003":"€30,09","BG8004":"€29,62","BG8006":"€29,62","BG8007":"€29,62","CG5500":"€26,54","CG5502":"€26,54","CG5503":"€26,54","CG5512":"€26,54","CG5514":"€26,54","CG5515":"€26,54","CG5516":"€26,54","CG5517":"€26,54","CG5523":"€44,43","CG5524":"€44,43","CG5525":"€44,43","CG5526":"€44,43","CG5527":"€44,43","CG5528":"€44,43","CG5529":"€29,62","CG5530":"€29,62","CG5531":"€29,62","DG3502":"€29,62","DG3503":"€29,62","DG3504":"€29,62","DG3507":"€44,43","HG5101":"€29,62","HG5103":"€29,62","HG5104":"€29,62","HG5105":"€29,62","HG5111":"€26,54","HG5117":"€29,62","HG5118":"€29,62","HG5119":"€29,62","HG5120":"€29,62","HG5121":"€29,62","HG5122":"€29,62","HG5123":"€29,62","JG698":"€29,62","JG9000":"€29,62","JG9001":"€29,62","MG125":"€29,62","MG3021":"€29,62","MG3060":"€44,43","MG3083":"€29,62","MG452":"€44,43","MG453":"€44,43","MG454":"€44,43","MG460":"€44,43","MG462":"€29,62","MG498":"€29,62","MG499":"€29,62","MG986":"€29,62","NG2034":"€20,98","NG2035":"€20,98","NG2036":"€20,98","NG2039":"€20,98","NG2048":"€20,98","SG1128":"€20,98","SG114":"€20,98","SG1182":"€20,98","SG1186":"€20,98","SG1198":"€20,98","SG1201":"€20,98","SG51":"€20,98","SG87":"€20,98","SG97":"€20,98","TG4000":"€44,43","TG4004":"€44,43","TG4006":"€29,62","TG4018":"€23,45","TG4019":"€23,45","TG4020":"€23,45","TG4021":"€23,45","TG4022":"€23,45","TG4023":"€23,45","TG4024":"€23,45","TG4025":"€23,45","TG4026":"€23,45","TG4027":"€23,45","TG4028a":"€23,45","TG4028b":"€23,45","TG465":"€44,43","XG7011":"€29,62","XG7014":"€29,62","XG7015":"€29,62","XG7017":"€29,62","XG7018":"€29,62","XG7019":"€29,62","YG4501":"€29,62","YG4502":"€29,62","YG4503":"€29,62","ZG5037":"€23,45"};
 
         function switchColorBrand(brand) {
             currentColorBrand = brand;
             document.getElementById('color-tab-bodaq').classList.toggle('active', brand === 'bodaq');
             document.getElementById('color-tab-coverstyl').classList.toggle('active', brand === 'coverstyl');
+            document.getElementById('color-tab-soif').classList.toggle('active', brand === 'soif');
             document.getElementById('bodaqColorList').style.display = brand === 'bodaq' ? 'block' : 'none';
             document.getElementById('coverstylColorList').style.display = brand === 'coverstyl' ? 'block' : 'none';
+            document.getElementById('soifColorList').style.display = brand === 'soif' ? 'block' : 'none';
         }
 
         function loadColorList() {
@@ -967,6 +1010,36 @@
                 `;
             });
             document.getElementById('coverstylColorList').innerHTML = html;
+
+            // SOIF
+            html = '';
+            SOIF_PRODUCTS.forEach(product => {
+                const isDisabled = (disabledColors.soif || []).includes(product.code);
+                const defaultPrijs = SOIF_INKOOP[product.code] || '';
+                const customPrijs = customPrices[product.code] || '';
+                const displayPrijs = customPrijs || (defaultPrijs ? defaultPrijs.replace('€','').replace(',','.').trim() : '');
+                html += `
+                    <div class="color-item ${isDisabled ? 'color-disabled' : ''}" data-code="${product.code}" data-name="${product.name}">
+                        <div class="color-toggle">
+                            <input type="checkbox" 
+                                   id="soif-${product.code}" 
+                                   ${!isDisabled ? 'checked' : ''}
+                                   onchange="toggleColor('soif', '${product.code}', this.checked)">
+                        </div>
+                        <img src="${product.image}" class="color-preview" alt="${product.code}">
+                        <div class="color-info">
+                            <div class="color-code">${product.code}</div>
+                            <div class="color-name">${product.name}</div>
+                            <span class="color-category">${product.category}</span>
+                            <span class="color-inkoop">€ <input type="number" step="0.01" value="${displayPrijs}" 
+                                style="width:60px;border:1px solid #ccc;border-radius:4px;padding:2px 4px;font-size:12px;font-weight:bold;" 
+                                onchange="saveProductPrice('${product.code}', this.value)" 
+                                onclick="event.stopPropagation()"></span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('soifColorList').innerHTML = html;
         }
 
         function saveProductPrice(code, value) {
@@ -998,7 +1071,7 @@
 
         function filterColorList() {
             const search = document.getElementById('colorSearch').value.toLowerCase();
-            const list = currentColorBrand === 'bodaq' ? 'bodaqColorList' : 'coverstylColorList';
+            const list = currentColorBrand === 'bodaq' ? 'bodaqColorList' : (currentColorBrand === 'soif' ? 'soifColorList' : 'coverstylColorList');
             const items = document.querySelectorAll(`#${list} .color-item`);
             
             items.forEach(item => {
@@ -1014,8 +1087,9 @@
             
             const bodaqDisabled = disabledColors.bodaq.length;
             const coverstylDisabled = disabledColors.coverstyl.length;
+            const soifDisabled = (disabledColors.soif || []).length;
             
-            alert(`✅ Kleuren instellingen opgeslagen!\n\nBodaq: ${bodaqDisabled} kleuren uitgeschakeld\nCoverstyl: ${coverstylDisabled} kleuren uitgeschakeld\n\nDeze kleuren worden verborgen in de calculator.`);
+            alert(`✅ Kleuren instellingen opgeslagen!\n\nBodaq: ${bodaqDisabled} kleuren uitgeschakeld\nCoverstyl: ${coverstylDisabled} kleuren uitgeschakeld\nSOIF: ${soifDisabled} kleuren uitgeschakeld\n\nDeze kleuren worden verborgen in de calculator.`);
         }
 
         // Load color list when tab is opened
