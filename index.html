@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Folievoordelen - Keuken Calculator</title>
-    <script src="calculator_products.js"></script>
-    <script>
-
-</script>
+    <script src="calculator_products.js?v=2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -29,13 +26,19 @@
         .section { margin-bottom: 40px; }
         .section-title { color: #d4af37; font-weight: 600; font-size: 20px; margin-bottom: 20px; }
         
-        .brand-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
+        .brand-tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
         .brand-tab {
-            padding: 15px 30px; background: #f5f5f5; border: none;
-            border-radius: 8px 8px 0 0; cursor: pointer; font-size: 16px;
+            padding: 12px 16px; background: #f5f5f5; border: none;
+            border-radius: 8px 8px 0 0; cursor: pointer; font-size: 14px;
             font-weight: 600; color: #666; transition: all 0.3s ease;
+            flex: 1; text-align: center; white-space: nowrap; min-width: 0;
         }
         .brand-tab.active { background: linear-gradient(135deg, #d4af37 0%, #c5a028 100%); color: #1a1a1a; }
+        @media (max-width: 480px) {
+            .brand-tab { padding: 10px 6px; font-size: 12px; }
+            .container { padding: 15px; }
+            h1 { font-size: 24px; }
+        }
         
         .category-filters {
             display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;
