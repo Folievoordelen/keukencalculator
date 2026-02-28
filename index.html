@@ -1573,7 +1573,7 @@
         function openAdminPanel() {
             // Laad huidige instellingen
             const settings = JSON.parse(localStorage.getItem('contactSettings') || '{}');
-            document.getElementById('admin-phone').value = settings.phone || '0631917022';
+            document.getElementById('admin-phone').value = settings.phone || '0644609042';
             document.getElementById('admin-email').value = settings.email || 'info@folievoordelen.nl';
             
             document.getElementById('adminPanel').style.display = 'flex';
@@ -1603,9 +1603,9 @@
         function getContactSettings() {
             const settings = JSON.parse(localStorage.getItem('contactSettings') || '{}');
             return {
-                phone: settings.phone || '0631917022',
+                phone: settings.phone || '0644609042',
                 email: settings.email || 'info@folievoordelen.nl',
-                whatsapp: (settings.phone || '0631917022').replace(/\s/g, '').replace(/^0/, '31')
+                whatsapp: (settings.phone || '0644609042').replace(/\s/g, '').replace(/^0/, '31')
             };
         }
     </script>
@@ -1719,7 +1719,7 @@
         function openFullAdminPanel() {
             // Laad contactgegevens
             const contactSettings = JSON.parse(localStorage.getItem('contactSettings') || '{}');
-            document.getElementById('admin-phone-full').value = contactSettings.phone || '0631917022';
+            document.getElementById('admin-phone-full').value = contactSettings.phone || '0644609042';
             document.getElementById('admin-email-full').value = contactSettings.email || 'info@folievoordelen.nl';
             
             // Laad prijzen

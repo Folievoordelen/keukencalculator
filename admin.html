@@ -385,7 +385,7 @@
                 <div class="category-card" style="margin-top: 20px;">
                     <h3>📧 Contactgegevens</h3>
                     <label>Telefoonnummer</label>
-                    <input type="tel" id="contact-phone" value="0631917022" 
+                    <input type="tel" id="contact-phone" value="0644609042" 
                            style="border: 2px solid #dee2e6; border-radius: 8px; padding: 12px; width: 100%; font-size: 16px; margin-bottom: 15px;">
                     <small style="color: #666; display: block; margin-bottom: 15px;">Gebruikt voor WhatsApp links</small>
                     
@@ -699,7 +699,7 @@
                 document.getElementById('prijs-emballage').value = settings.prijzen?.emballage || 25;
                 document.getElementById('verspilling').value = settings.folie?.verspilling_percentage || 15;
                 document.getElementById('contact-email').value = settings.contact?.email || 'info@folievoordelen.nl';
-                document.getElementById('contact-phone').value = settings.contact?.phone || '0631917022';
+                document.getElementById('contact-phone').value = settings.contact?.phone || '0644609042';
             }
         }
 
@@ -729,7 +729,7 @@
             }
 
             const savedSettings = JSON.parse(localStorage.getItem('calculatorSettings') || '{}');
-            const myPhone = savedSettings.contact?.phone || '0631917022';
+            const myPhone = savedSettings.contact?.phone || '0644609042';
 
             const reversed = [...aanvragen].reverse();
             list.innerHTML = reversed.map((a) => {
