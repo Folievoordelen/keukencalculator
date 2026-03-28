@@ -321,6 +321,36 @@
                         ✅ Coverstyl Prijzen Toepassen
                     </button>
                 </div>
+
+                <!-- SOIF Bulk -->
+                <div class="category-card" style="border-left-color: #e65100;">
+                    <h3 style="color: #e65100;">🟠 SOIF Prijzen Aanpassen</h3>
+                    
+                    <label>Percentage aanpassing</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="number" id="bulk-soif-pct" value="5" step="0.5" min="-50" max="100" 
+                               style="flex: 1; font-size: 20px; text-align: center; padding: 15px;">
+                        <span style="font-size: 24px; font-weight: bold; color: #666;">%</span>
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 8px;">Positief = prijsverhoging, Negatief = prijsverlaging</small>
+
+                    <div style="display: flex; gap: 8px; margin-top: 15px;">
+                        <button onclick="setBulkPct('soif', -5)" style="flex:1; padding: 8px; border: 2px solid #dc3545; background: white; color: #dc3545; border-radius: 8px; cursor: pointer; font-weight: 600;">-5%</button>
+                        <button onclick="setBulkPct('soif', -2)" style="flex:1; padding: 8px; border: 2px solid #dc3545; background: white; color: #dc3545; border-radius: 8px; cursor: pointer; font-weight: 600;">-2%</button>
+                        <button onclick="setBulkPct('soif', 2)" style="flex:1; padding: 8px; border: 2px solid #28a745; background: white; color: #28a745; border-radius: 8px; cursor: pointer; font-weight: 600;">+2%</button>
+                        <button onclick="setBulkPct('soif', 5)" style="flex:1; padding: 8px; border: 2px solid #28a745; background: white; color: #28a745; border-radius: 8px; cursor: pointer; font-weight: 600;">+5%</button>
+                        <button onclick="setBulkPct('soif', 10)" style="flex:1; padding: 8px; border: 2px solid #28a745; background: white; color: #28a745; border-radius: 8px; cursor: pointer; font-weight: 600;">+10%</button>
+                    </div>
+
+                    <div id="bulk-soif-preview" style="margin-top: 20px;"></div>
+
+                    <button onclick="previewBulk('soif')" class="export-button" style="margin-top: 15px; background: linear-gradient(135deg, #e65100 0%, #ff8f00 100%); color: white;">
+                        👁️ Preview Berekening
+                    </button>
+                    <button onclick="applyBulk('soif')" class="save-button" style="margin-top: 10px;">
+                        ✅ SOIF Prijzen Toepassen
+                    </button>
+                </div>
             </div>
 
             <div class="warning-box" style="margin-top: 30px;">
